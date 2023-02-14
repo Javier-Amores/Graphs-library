@@ -1,3 +1,4 @@
+/*
 package graphs
 import scala.collection.mutable.Map
 
@@ -14,6 +15,7 @@ trait Graph[V]{
   def removeVertices(vs: List[V]): Unit
   def removeEdge(u: V, v: V): Unit
   def removeEdges(vs: List[(V,V)]): Unit
+  def getAdjacentNodes(v: V): List[V]
   def order: Int //the order is defined as the number of nodes in the graph.
   def size: Int //the size is defined as the number of edges in the graph.
   def degree(v: V): Int //returns the number of edges meeting at v
@@ -93,9 +95,20 @@ class MGraph[V] extends Graph[V] {
     edges_(key) = vertices_.filter(_ != key).toSet
   }
 
+  def getAdjacentNodes(v: V): List[V] = edges_(v).toList
+
 }
 
+class AdjacencyList extends Graph[Int] {
+var adjacencyList:List[List[Int]] = List()
+def vertices: List[Int] = {
+  val l :List[Int] = (adjacencyList.indices).toList
+  l
+}
+  def edges: Map[Int,Set[Int]] =
 
+
+}
 
 //class Prueba extends WeightedDirectedGraphs[String,Int]
 
@@ -163,3 +176,5 @@ object example extends App{
   println(g.edges)
 }
 
+
+*/

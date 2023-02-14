@@ -34,4 +34,6 @@ var s = Set(1,2,3)
   println(s)
 
 
+  var r = (1 until 10).toList
+  println(r)
 }
