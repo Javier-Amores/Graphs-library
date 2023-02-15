@@ -1,11 +1,7 @@
 object test extends App {
 
 var d = Map(1->Set(2),2->Set(1,3),3->Set(2,3,5))
-  d = d + (3->Set())
-  println(d(1))
-  println(d.keySet)
-  println(d.values.toList)
-
+  for ((k,v)<-d) {println((k,v))}
 
 /*
       var myMatrix = Array.ofDim[Boolean](3,3)
@@ -24,7 +20,7 @@ var d = Map(1->Set(2),2->Set(1,3),3->Set(2,3,5))
         }
         println();
       }
-*/
+
 
 var s = Set(1,2,3)
   println(s)
@@ -36,4 +32,6 @@ var s = Set(1,2,3)
 
   var r = (1 until 10).toList
   println(r)
+
+ */
 }
