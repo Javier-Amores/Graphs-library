@@ -68,7 +68,7 @@ trait Graph[V]{
   def removeEdges(edgeSet: Set[Edge[V]]): Unit
 
   /**
-   *
+   * Gives the set of vertices adjacent to a node.
    * @param node An existing vertex.
    * @return The set of vertices adjacent to node.
    */

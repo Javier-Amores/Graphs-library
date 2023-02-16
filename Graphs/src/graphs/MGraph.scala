@@ -13,7 +13,7 @@ class MGraph[V] extends Graph[V] {
         edgeSet = edgeSet + Edge(source, destination)
       }
     }
-    edgeSet
+    edgeSet //each edge is twice (eg, (a,b) ,(b,a))
   }
 
   def addVertex(vertex: V):Unit = if (!(this.vertices contains vertex)) {graph_ = graph_ + (vertex -> Set())} else {throw  GraphException(s"Vertex $vertex is already in the graph.")}
