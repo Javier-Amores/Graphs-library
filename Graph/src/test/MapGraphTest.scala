@@ -1,6 +1,6 @@
-import graph.MapGraph
+import graph.{Edge, MapGraph}
 
-object MapGraphTest extends App{
+object MapGraphTest extends App {
   val g = MapGraph[Int]()
   g.addVertex(1)
   g.addVertex(2)
@@ -8,9 +8,37 @@ object MapGraphTest extends App{
   g.addVertex(4)
   g.addVertex(5)
   g.addVertex(6)
+
+  g.addEdge(Edge(6,5))
   g.deleteVertex(6)
-  println(g.containsVertex(6))
-  println(g.containsVertex(5))
+  assert(!g.containsEdge(Edge(5, 6)))
+
+  assert(g.containsVertex(4))
+  assert(!g.containsVertex(6))
+
+
+
+  //g.addEdge(1, 2)
+  //g.addEdge(2, 3)
+  g.addEdge(Edge(1, 2))
+  g.addEdge(Edge(3, 1))
+  g.addEdge(Edge(3, 4))
+  g.addEdge(Edge(3, 5))
+  g.addEdge(Edge(5, 4))
+
+  g.deleteEdge(Edge(5, 3))
+
+  assert(g.containsEdge(Edge(4, 3)))
+  assert(!g.containsEdge(Edge(5, 3)))
+
+
+  println(g.successors(3))
+  println(g.vertices)
+  println("order of g = " + g.order)
+  println("degree of vertex 3 = "+g.degree(3))
+  println(g.edges)
+  assert(g.edges.contains(Edge(5,4)))
+  println(g.size)
 
 
 }

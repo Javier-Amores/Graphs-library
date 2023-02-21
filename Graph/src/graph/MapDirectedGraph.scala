@@ -16,22 +16,44 @@ class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
     throw GraphException(s"Vertex $vertex is already in the graph.")
   }
 
-  override def deleteVertex(vertex: V): Unit = if (succs.contains(vertex)) {
-    succs.subtractOne(vertex)
+  override def deleteVertex(vertex: V): Unit = if (containsVertex(vertex)) {
+    val successors = succs.remove(vertex)
+    successors.get.foreach(successor => succs(successor) remove vertex)
   }
   else {
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def containsVertex(vertex: V): Boolean = ???
+  override def containsVertex(vertex: V): Boolean = succs.contains(vertex)
 
-  override def vertices: immutable.Set[V] = ???
+  override def vertices: immutable.Set[V] = {
+    val immutableVertices = immutable.Set.empty ++ succs.keySet
+    immutableVertices
+  }
 
-  override def order: Int = ???
+  override def order: Int = succs.size
 
-  override def successors(vertex: V): immutable.Set[V] = ???
+  override def successors(vertex: V): immutable.Set[V] = if (containsVertex(vertex)) {
+    val immutableSuccs = immutable.Set.empty ++ succs(vertex)
+    immutableSuccs
+  }
+  else {
+    throw GraphException(s"Vertex $vertex not found.")
+  }
 
-  override def predecessors(vertex: V): immutable.Set[V] = ???
+  override def predecessors(vertex: V): immutable.Set[V] = if (containsVertex(vertex)) {
+    val predecessorSet = mutable.Set[V]()
+    for ((predecessor,destinationSet) <- succs) {
+      if (destinationSet.contains(vertex)) {
+        predecessorSet += predecessor
+      }
+    }
+    val immutablePredecessorSet = immutable.Set.empty ++ predecessorSet
+    immutablePredecessorSet
+  }
+  else {
+    throw GraphException(s"Vertex $vertex not found.")
+  }
 
   override def degree(vertex: V): Int = ???
 

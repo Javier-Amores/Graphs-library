@@ -54,7 +54,24 @@ class MapGraph[V] extends Graph[V, Edge] {
 
   override def containsEdge(edge: Edge[V]): Boolean = (containsVertex(edge.vertex1) && (successors(edge.vertex1) contains edge.vertex2))
 
-  override def edges: Set[Edge[V]] = ???
+  override def edges: Set[Edge[V]] = {
+    val edgeSet = mutable.Set[Edge[V]]()
+    val visited = mutable.Set[V]()
+    for ((vertex1, _) <- succs) {
+      (succs(vertex1) diff visited).foreach(vertex2 => edgeSet += Edge(vertex1, vertex2 ) )
+      visited += vertex1
+    }
+    val finalEdgeSet = Set.empty ++ edgeSet
+    finalEdgeSet
+  }
 
-  override def size: Int = ???
+  override def size: Int = {
+    var sum: Int = 0
+    val visited = mutable.Set[V]()
+    for ((vertex,_)<- succs) {
+      sum += (succs(vertex) diff visited).size
+      visited += vertex
+    }
+    sum
+  }
 }
