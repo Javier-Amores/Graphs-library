@@ -52,7 +52,7 @@ class MapGraph[V] extends Graph[V, Edge] {
     succs(edge.vertex2) -= edge.vertex1
   }
 
-  override def containsEdge(edge: Edge[V]): Boolean = (containsVertex(edge.vertex1) && (successors(edge.vertex1) contains edge.vertex2))
+  override def containsEdge(edge: Edge[V]): Boolean = containsVertex(edge.vertex1) && (succs(edge.vertex1) contains edge.vertex2)
 
   override def edges: Set[Edge[V]] = {
     val edgeSet = mutable.Set[Edge[V]]()
