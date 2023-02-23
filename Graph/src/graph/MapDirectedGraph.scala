@@ -17,8 +17,10 @@ class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
   }
 
   override def deleteVertex(vertex: V): Unit = if (containsVertex(vertex)) {
-    val successors = succs.remove(vertex)
-    successors.get.foreach(successor => succs(successor) remove vertex)
+    succs -= vertex
+    for ((_,destinationSet) <- succs) {
+      destinationSet remove vertex
+    }
   }
   else {
     throw GraphException(s"Vertex $vertex not found.")

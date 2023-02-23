@@ -9,11 +9,25 @@ object MapDirectedWeightedGraph {
 class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W, DirectedWeightedEdge] {
   private val succsAndWeights = mutable.Map[V, mutable.Set[Pair[V, W]]]()
 
-  override def addVertex(vertex: V): Unit = ???
+  override def addVertex(vertex: V): Unit = if (!containsVertex(vertex)) {
+    succsAndWeights(vertex) = mutable.Set[Pair[V, W]]()
+  }
+  else {
+    throw GraphException(s"Vertex $vertex is already in the graph.")
+  }
 
-  override def deleteVertex(vertex: V): Unit = ???
+  override def deleteVertex(vertex: V): Unit = if (containsVertex(vertex)) {
+    succsAndWeights -= vertex
+    for ((_, destinationAndWeightSet) <- succsAndWeights) {
+      destinationAndWeightSet remove Pair(vertex,_)
+    }
+  }
+  else {
+    throw GraphException(s"Vertex $vertex not found.")
+  }
 
-  override def containsVertex(vertex: V): Boolean = ???
+
+  override def containsVertex(vertex: V): Boolean = succsAndWeights.contains(vertex)
 
   override def vertices: immutable.Set[V] = ???
 
