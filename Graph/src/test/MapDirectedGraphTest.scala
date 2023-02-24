@@ -27,10 +27,10 @@ object MapDirectedGraphTest extends App {
   g.addEdge(DirectedEdge(4,5))
   g.addEdge(DirectedEdge(5,4))
 
-  println("succesors of 1 = " + g.successors(1))
-  println("succesors of 4 = " + g.successors(4))
-  println("succesors of 5 = " + g.successors(5))
-  println("succesors of 7 = " + g.successors(7))
+  println("successors of 1 = " + g.successors(1))
+  println("successors of 4 = " + g.successors(4))
+  println("successors of 5 = " + g.successors(5))
+  println("successors of 7 = " + g.successors(7))
 
   println("predecessors of 1 = " + g.predecessors(1))
   println("predecessors of 3 = " + g.predecessors(3))
