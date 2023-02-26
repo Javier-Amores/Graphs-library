@@ -18,14 +18,14 @@ object MapGraphTest extends App {
 
 
 
-  //g.addEdge(1, 2)
-  //g.addEdge(2, 3)
+
   g.addEdge(Edge(1, 2))
   g.addEdge(Edge(3, 1))
   g.addEdge(Edge(3, 4))
   g.addEdge(Edge(3, 5))
   g.addEdge(Edge(5, 4))
-
+  val edge = g.addEdge(3,2)
+  assert(g.containsEdge(edge))
   g.deleteEdge(Edge(5, 3))
 
   assert(g.containsEdge(Edge(4, 3)))

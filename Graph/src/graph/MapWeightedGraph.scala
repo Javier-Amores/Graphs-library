@@ -61,10 +61,13 @@ class MapWeightedGraph[V, W] extends WeightedGraph[V, W, WeightedEdge] {
   override def addEdge(vertex1: V, vertex2: V, weight: W): WeightedEdge[V, W] = ???
 
   override def addEdge(edge: WeightedEdge[V, W]): Unit = if (containsEdgeAnyWeight(edge)) {
-    throw GraphException(s"Edge $edge is already in the graph.")
+    throw GraphException(s"${Edge(edge.vertex1,edge.vertex2)} is already in the graph.")
   }
   else if (!containsVertex(edge.vertex1)) {
     throw GraphException(s"Vertex ${edge.vertex1} not found.")
+  }
+  else if (edge.vertex1==edge.vertex2) {
+    throw GraphException("Self-loops are not allowed in simple graphs")
   }
   else if (!containsVertex(edge.vertex2)) {
     throw GraphException(s"Vertex ${edge.vertex2} not found.")

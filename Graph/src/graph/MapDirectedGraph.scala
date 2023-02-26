@@ -79,13 +79,37 @@ class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def addEdge(source: V, destination: V): DirectedEdge[V] = ???
+  override def addEdge(source: V, destination: V): DirectedEdge[V] = {
+    if (source == destination) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
+    }
+    else {
+      val directedEdge = DirectedEdge(source, destination)
+      if (containsEdge(directedEdge)) {
+        throw GraphException(s"Edge $directedEdge is already in the graph.")
+      }
+      else if (!containsVertex(source)) {
+        throw GraphException(s"Vertex $source not found.")
+      }
+      else if (!containsVertex(destination)) {
+        throw GraphException(s"Vertex $destination not found.")
+      }
+      else {
+        succs(source) += destination
+        directedEdge
+      }
+    }
+
+  }
 
   override def addEdge(edge: DirectedEdge[V]): Unit = if (containsEdge(edge)) {
     throw GraphException(s"Edge $edge is already in the graph.")
   }
   else if (!containsVertex(edge.source)) {
     throw GraphException(s"Vertex ${edge.source} not found.")
+  }
+  else if (edge.source == edge.destination) {
+    throw GraphException("Self-loops are not allowed in simple graphs")
   }
   else if (!containsVertex(edge.destination)) {
     throw GraphException(s"Vertex ${edge.destination} not found.")

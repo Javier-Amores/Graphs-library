@@ -30,6 +30,7 @@ object MapWeightedGraphTest extends App {
 
 
 
+
   println("successors of A = "+g.successors("A"))
   println("successors and weights of A = "+g.successorsAndWeights("A"))
   println("degree of A = " + g.degree("A"))

@@ -25,7 +25,8 @@ object MapDirectedGraphTest extends App {
   g.addEdge(DirectedEdge(3,2))
   g.addEdge(DirectedEdge(4,1))
   g.addEdge(DirectedEdge(4,5))
-  g.addEdge(DirectedEdge(5,4))
+  val directedEdge = g.addEdge(5,4)
+  assert(g.containsEdge(directedEdge))
 
   println("successors of 1 = " + g.successors(1))
   println("successors of 4 = " + g.successors(4))

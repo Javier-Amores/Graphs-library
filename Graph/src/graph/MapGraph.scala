@@ -32,13 +32,46 @@ class MapGraph[V] extends Graph[V, Edge] {
   override def degree(vertex: V): Int = if (containsVertex(vertex)) {succs(vertex).size}
   else {throw  GraphException(s"Vertex $vertex not found.")}
 
-  override def addEdge(vertex1: V, vertex2: V): Edge[V] = ???
+  override def addEdge(vertex1: V, vertex2: V): Edge[V] = {
+    if (vertex1 == vertex2) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
+    }
+    else{
+      val edge = Edge(vertex1, vertex2)
+      if (containsEdge(edge)) {
+        throw GraphException(s"Edge $edge is already in the graph.")
+      }
+      else if (!containsVertex(vertex1)) {
+        throw GraphException(s"Vertex $vertex1 not found.")
+      }
+      else if (!containsVertex(vertex2)) {
+        throw GraphException(s"Vertex $vertex2 not found.")
+      }
+      else {
+        succs(vertex1) += vertex2
+        succs(vertex2) += vertex1
+        edge
+      }}
 
-  override def addEdge(edge: Edge[V]): Unit = if (containsEdge(edge)) {throw  GraphException(s"Edge $edge is already in the graph.")}
-  else if (!containsVertex(edge.vertex1)) {throw  GraphException(s"Vertex ${edge.vertex1} not found.")}
-  else if (!containsVertex(edge.vertex2)) {throw  GraphException(s"Vertex ${edge.vertex2} not found.")}
-  else {succs(edge.vertex1) += edge.vertex2
-        succs(edge.vertex2) += edge.vertex1}
+  }
+
+
+  override def addEdge(edge: Edge[V]): Unit = if (containsEdge(edge)) {
+    throw GraphException(s"Edge $edge is already in the graph.")
+  }
+  else if (!containsVertex(edge.vertex1)) {
+    throw GraphException(s"Vertex ${edge.vertex1} not found.")
+  }
+  else if (edge.vertex1 == edge.vertex2){
+    throw GraphException("Self-loops are not allowed in simple graphs")
+  }
+  else if (!containsVertex(edge.vertex2)) {
+    throw GraphException(s"Vertex ${edge.vertex2} not found.")
+  }
+  else {
+    succs(edge.vertex1) += edge.vertex2
+    succs(edge.vertex2) += edge.vertex1
+  }
 
   override def deleteEdge(edge: Edge[V]): Unit = if (!containsEdge(edge)) {throw  GraphException(s"Edge $edge not found.")}
   else if (!containsVertex(edge.vertex1)) {
