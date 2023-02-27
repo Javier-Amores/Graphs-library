@@ -6,6 +6,12 @@ object DirectedEdge {
   def unapply[V](directedEdge: DirectedEdge[V]): Option[(V, V)] = Some(directedEdge.source, directedEdge.destination)
 }
 
+/**
+ * Represents a directed edge connecting two vertices.
+ * @param source the source vertex
+ * @param destination the destination vertex
+ * @tparam V the type of vertices in the edge
+ */
 class DirectedEdge[V](val source: V, val destination: V) {
   override def equals(other: Any): Boolean = other match {
     case that: DirectedEdge[V] =>

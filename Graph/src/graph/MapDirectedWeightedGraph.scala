@@ -6,6 +6,13 @@ object MapDirectedWeightedGraph {
   def apply[V, W](): MapDirectedWeightedGraph[V, W] = new MapDirectedWeightedGraph()
 }
 
+/**
+ * Represents a directed weighted graph, where each vertex is represented by a key in a mutable map, and
+ * the value associated with each key is a mutable set of Pairs whose first component represents the successors of that
+ * vertex and the second one represents the weight of the edge.
+ * @tparam V the type of vertices in the graph
+ * @tparam W the type of weights in the graph
+ */
 class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W, DirectedWeightedEdge] {
   private val succsAndWeights = mutable.Map[V, mutable.Set[Pair[V, W]]]()
 
@@ -105,9 +112,51 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W, Directe
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def addEdge(source: V, destination: V): DirectedWeightedEdge[V, W] = ???
+  override def addEdge(source: V, destination: V): DirectedWeightedEdge[V, W] = {
+    if (source == destination) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
+    }
+    else {
+      val edge = DirectedWeightedEdge(source, destination, null.asInstanceOf[W])
+      if (containsEdgeAnyWeight(edge)) {
+        throw GraphException(s"${Edge(edge.source, edge.destination)} is already in the graph.")
+      }
+      else if (!containsVertex(source)) {
+        throw GraphException(s"Vertex $source not found.")
+      }
+      else if (!containsVertex(destination)) {
+        throw GraphException(s"Vertex $destination not found.")
+      }
+      else {
+        succsAndWeights(source) += Pair(destination, null.asInstanceOf[W])
+        edge
+      }
+    }
 
-  override def addEdge(source: V, destination: V, weight: W): DirectedWeightedEdge[V, W] = ???
+  }
+
+  override def addEdge(source: V, destination: V, weight: W): DirectedWeightedEdge[V, W] = {
+    if (source == destination) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
+    }
+    else {
+      val edge = DirectedWeightedEdge(source, destination, weight)
+      if (containsEdgeAnyWeight(edge)) {
+        throw GraphException(s"${Edge(edge.source, edge.destination)} is already in the graph.")
+      }
+      else if (!containsVertex(source)) {
+        throw GraphException(s"Vertex $source not found.")
+      }
+      else if (!containsVertex(destination)) {
+        throw GraphException(s"Vertex $destination not found.")
+      }
+      else {
+        succsAndWeights(source) += Pair(destination, weight)
+        edge
+      }
+    }
+
+  }
 
   override def addEdge(edge: DirectedWeightedEdge[V, W]): Unit = if (containsEdgeAnyWeight(edge)) {
     throw GraphException(s"${DirectedEdge(edge.source,edge.destination)} is already in the graph.")
@@ -140,6 +189,11 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W, Directe
 
   override def containsEdge(edge: DirectedWeightedEdge[V, W]): Boolean = containsVertex(edge.source) && (succsAndWeights(edge.source) contains Pair(edge.destination,edge.weight))
 
+  /**
+   * Checks if the graph contains an edge regardless of the weight
+   * @param edge the edge to check
+   * @return true if the graph contains the edge, false otherwise
+   */
   private def containsEdgeAnyWeight(edge: DirectedEdge[V]): Boolean = containsVertex(edge.source) && (succsAndWeights(edge.source).map(pair => pair.vertex) contains edge.destination)
 
   override def edges: Set[DirectedWeightedEdge[V, W]] = {

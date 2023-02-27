@@ -8,6 +8,14 @@ object WeightedEdge {
     Some(weightedEdge.vertex1, weightedEdge.vertex2, weightedEdge.weight)
 }
 
+/**
+ * A weighted edge between two vertices.
+ * @param vertex1 one vertex of the edge
+ * @param vertex2 the other vertex of the edge
+ * @param weight the weight of the edge
+ * @tparam V the type of vertices in the edge
+ * @tparam W the type of the weight
+ */
 // A weighted undirected edge.
 class WeightedEdge[V, W](vertex1: V, vertex2: V, val weight: W) extends Edge[V](vertex1, vertex2) {
   override def equals(other: Any): Boolean = other match {

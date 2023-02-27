@@ -6,6 +6,13 @@ object MapWeightedGraph {
   def apply[V, W](): MapWeightedGraph[V, W] = new MapWeightedGraph()
 }
 
+/**
+ * Represents a weighted graph, where each vertex is represented by a key in a mutable map, and
+ * the value associated with each key is a mutable set of Pairs whose first component represents the successors of that
+ * vertex and the second one represents the weight of the edge.
+ * @tparam V the type of vertices in the graph
+ * @tparam W the type of the weights associated with the edges
+ */
 class MapWeightedGraph[V, W] extends WeightedGraph[V, W, WeightedEdge] {
   private val succsAndWeights = mutable.Map[V, mutable.Set[Pair[V, W]]]()
 
@@ -56,9 +63,53 @@ class MapWeightedGraph[V, W] extends WeightedGraph[V, W, WeightedEdge] {
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def addEdge(vertex1: V, vertex2: V): WeightedEdge[V, W] = ???
+  override def addEdge(vertex1: V, vertex2: V): WeightedEdge[V, W] = {
+    if (vertex1 == vertex2) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
+    }
+    else {
+      val edge = WeightedEdge(vertex1, vertex2,null.asInstanceOf[W])
+      if (containsEdgeAnyWeight(edge)) {
+        throw GraphException(s"${Edge(edge.vertex1,edge.vertex2)} is already in the graph.")
+      }
+      else if (!containsVertex(vertex1)) {
+        throw GraphException(s"Vertex $vertex1 not found.")
+      }
+      else if (!containsVertex(vertex2)) {
+        throw GraphException(s"Vertex $vertex2 not found.")
+      }
+      else {
+        succsAndWeights(vertex1) += Pair(vertex2,null.asInstanceOf[W])
+        succsAndWeights(vertex2) += Pair(vertex1,null.asInstanceOf[W])
+        edge
+      }
+    }
 
-  override def addEdge(vertex1: V, vertex2: V, weight: W): WeightedEdge[V, W] = ???
+  }
+
+  override def addEdge(vertex1: V, vertex2: V, weight: W): WeightedEdge[V, W] = {
+    if (vertex1 == vertex2) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
+    }
+    else {
+      val edge = WeightedEdge(vertex1, vertex2, weight)
+      if (containsEdgeAnyWeight(edge)) {
+        throw GraphException(s"${Edge(edge.vertex1, edge.vertex2)} is already in the graph.")
+      }
+      else if (!containsVertex(vertex1)) {
+        throw GraphException(s"Vertex $vertex1 not found.")
+      }
+      else if (!containsVertex(vertex2)) {
+        throw GraphException(s"Vertex $vertex2 not found.")
+      }
+      else {
+        succsAndWeights(vertex1) += Pair(vertex2, weight)
+        succsAndWeights(vertex2) += Pair(vertex1, weight)
+        edge
+      }
+    }
+
+  }
 
   override def addEdge(edge: WeightedEdge[V, W]): Unit = if (containsEdgeAnyWeight(edge)) {
     throw GraphException(s"${Edge(edge.vertex1,edge.vertex2)} is already in the graph.")
@@ -93,6 +144,12 @@ class MapWeightedGraph[V, W] extends WeightedGraph[V, W, WeightedEdge] {
 
   override def containsEdge(edge: WeightedEdge[V, W]): Boolean = containsVertex(edge.vertex1) && (succsAndWeights(edge.vertex1) contains Pair(edge.vertex2,edge.weight))
 
+  /**
+   * Checks if the graph contains an edge regardless of the weight
+   *
+   * @param edge the edge to check
+   * @return true if the graph contains the edge, false otherwise
+   */
   private def containsEdgeAnyWeight(edge: Edge[V]): Boolean = containsVertex(edge.vertex1) && (succsAndWeights(edge.vertex1).map(pair => pair.vertex) contains edge.vertex2)
 
   override def edges: Set[WeightedEdge[V, W]] = {

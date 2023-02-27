@@ -35,7 +35,7 @@ object MapGraphTest extends App {
   println(g.successors(3))
   println(g.vertices)
   println("order of g = " + g.order)
-  println("degree of vertex 3 = "+g.degree(3))
+  println("degree of vertex 3 = " + g.degree(3))
   println(g.edges)
   assert(g.edges.contains(Edge(5,4)))
   println(g.size)

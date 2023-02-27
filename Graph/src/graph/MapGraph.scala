@@ -6,6 +6,11 @@ object MapGraph {
   def apply[V](): MapGraph[V] = new MapGraph()
 }
 
+/**
+ * Represents a graph, where each vertex is represented by a key in a mutable map, and
+ * the value associated with each key is a mutable set of vertices representing the successors of that vertex.
+ * @tparam V the type of vertices in the graph
+ */
 class MapGraph[V] extends Graph[V, Edge] {
   private val succs = mutable.Map[V, mutable.Set[V]]()
 

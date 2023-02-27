@@ -20,4 +20,5 @@ object EdgeTest extends App {
 
   assert(edge1 != edge4)
   assert(edge4 != edge5)
+
 }

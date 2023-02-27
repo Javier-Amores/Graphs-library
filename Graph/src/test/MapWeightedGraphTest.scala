@@ -27,6 +27,10 @@ object MapWeightedGraphTest extends App {
   g.addEdge(WeightedEdge("D","A",4))
   g.addEdge(WeightedEdge("G","B",0))
   g.addEdge(WeightedEdge("C","D",2))
+  val nullWeightEdge = g.addEdge("E","G")
+  assert(nullWeightEdge!=WeightedEdge("E","G",0))
+  g.addEdge("A","G",99)
+
 
 
 
@@ -41,6 +45,8 @@ object MapWeightedGraphTest extends App {
   g.deleteEdge(WeightedEdge("B","G",0))
 
   println("size of g = " + g.size)
+  println(g.edges)
+
 
 
 }

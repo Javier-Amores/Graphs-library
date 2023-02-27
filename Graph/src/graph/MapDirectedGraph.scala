@@ -6,6 +6,11 @@ object MapDirectedGraph {
   def apply[V](): MapDirectedGraph[V] = new MapDirectedGraph()
 }
 
+/**
+ * Represents a directed graph, where each vertex is represented by a key in a mutable map, and
+ * the value associated with each key is a mutable set of vertices representing the successors of that vertex.
+ * @tparam V the type of vertices in the graph
+ */
 class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
   private val succs = mutable.Map[V, mutable.Set[V]]()
 

@@ -35,6 +35,8 @@ object MapDirectedWeightedGraphTest extends App{
   g.addEdge(DirectedWeightedEdge("E","B",4))
   g.addEdge(DirectedWeightedEdge("E","F",5))
   g.addEdge(DirectedWeightedEdge("F","E",5))
+  g.addEdge("B","A")
+  g.addEdge("F","D",12)
 
   g.deleteEdge(DirectedWeightedEdge("C","A",72))
 

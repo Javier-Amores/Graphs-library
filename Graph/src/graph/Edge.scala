@@ -7,6 +7,12 @@ object Edge {
   def unapply[V](edge: Edge[V]): Option[(V, V)] = Some(edge.vertex1, edge.vertex2)
 }
 
+/**
+ * Represents an edge connecting two vertices.
+ * @param vertex1 one vertex of the edge
+ * @param vertex2 the other vertex of the edge
+ * @tparam V the type of vertices in the edge
+ */
 class Edge[V](val vertex1: V, val vertex2: V) {
   override def equals(other: Any): Boolean = other match {
     case that: Edge[V] =>
