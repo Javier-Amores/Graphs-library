@@ -10,8 +10,8 @@ object MapDirectedGraphTest extends App {
   g.addVertex(6)
   g.addVertex(7)
 
-  g.addEdge(DirectedEdge(5,6))
-  g.addEdge(DirectedEdge(6,4))
+  g.addEdge(DirectedEdge(5, 6))
+  g.addEdge(DirectedEdge(6, 4))
   g.deleteVertex(6)
 
 
@@ -20,12 +20,12 @@ object MapDirectedGraphTest extends App {
 
   println(g.vertices)
   println("graph order = " + g.order)
-  g.addEdge(DirectedEdge(1,2))
-  g.addEdge(DirectedEdge(1,3))
-  g.addEdge(DirectedEdge(3,2))
-  g.addEdge(DirectedEdge(4,1))
-  g.addEdge(DirectedEdge(4,5))
-  val directedEdge = g.addEdge(5,4)
+  g.addEdge(DirectedEdge(1, 2))
+  g.addEdge(DirectedEdge(1, 3))
+  g.addEdge(DirectedEdge(3, 2))
+  g.addEdge(DirectedEdge(4, 1))
+  g.addEdge(DirectedEdge(4, 5))
+  val directedEdge = g.addEdge(5, 4)
   assert(g.containsEdge(directedEdge))
 
   println("successors of 1 = " + g.successors(1))
@@ -37,16 +37,15 @@ object MapDirectedGraphTest extends App {
   println("predecessors of 3 = " + g.predecessors(3))
   println("predecessors of 7 = " + g.predecessors(7))
 
-  println("degree of 1 = "+g.degree(1))
-  println("indegree of 1 = "+g.indegree(1))
-  println("outdegree of 1 = "+g.outdegree(1))
+  println("degree of 1 = " + g.degree(1))
+  println("indegree of 1 = " + g.indegree(1))
+  println("outdegree of 1 = " + g.outdegree(1))
 
-  g.deleteEdge(DirectedEdge(3,2))
-  assert(!g.containsEdge(DirectedEdge(3,2)))
-  assert(g.containsEdge(DirectedEdge(4,5)))
+  g.deleteEdge(DirectedEdge(3, 2))
+  assert(!g.containsEdge(DirectedEdge(3, 2)))
+  assert(g.containsEdge(DirectedEdge(4, 5)))
   println(g.edges)
   println(g.size)
-
 
 
 }

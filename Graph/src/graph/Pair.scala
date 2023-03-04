@@ -2,6 +2,7 @@ package graph
 
 /**
  * Class for implementing weighted graphs.
+ *
  * @param vertex a vertex
  * @param weight a weight
  * @tparam V the type of the vertex

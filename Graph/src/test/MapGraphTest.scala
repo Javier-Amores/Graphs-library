@@ -9,7 +9,7 @@ object MapGraphTest extends App {
   g.addVertex(5)
   g.addVertex(6)
 
-  g.addEdge(Edge(6,5))
+  g.addEdge(Edge(6, 5))
   g.deleteVertex(6)
   assert(!g.containsEdge(Edge(5, 6)))
 
@@ -17,14 +17,12 @@ object MapGraphTest extends App {
   assert(!g.containsVertex(6))
 
 
-
-
   g.addEdge(Edge(1, 2))
   g.addEdge(Edge(3, 1))
   g.addEdge(Edge(3, 4))
   g.addEdge(Edge(3, 5))
   g.addEdge(Edge(5, 4))
-  val edge = g.addEdge(3,2)
+  val edge = g.addEdge(3, 2)
   assert(g.containsEdge(edge))
   g.deleteEdge(Edge(5, 3))
 
@@ -37,8 +35,7 @@ object MapGraphTest extends App {
   println("order of g = " + g.order)
   println("degree of vertex 3 = " + g.degree(3))
   println(g.edges)
-  assert(g.edges.contains(Edge(5,4)))
+  assert(g.edges.contains(Edge(5, 4)))
   println(g.size)
-
 
 }

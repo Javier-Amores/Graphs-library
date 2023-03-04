@@ -1,11 +1,11 @@
 import graph.Edge
 
 object EdgeTest extends App {
-  val edge1 = Edge[Int](1,2)
-  val edge2 = Edge[Int](1,2)
-  val edge3 = Edge[Int](2,1)
-  val edge4 = Edge[Int](3,4)
-  val edge5 = Edge[Int](4,5)
+  val edge1 = Edge[Int](1, 2)
+  val edge2 = Edge[Int](1, 2)
+  val edge3 = Edge[Int](2, 1)
+  val edge4 = Edge[Int](3, 4)
+  val edge5 = Edge[Int](4, 5)
 
   println(edge1)
 
@@ -20,5 +20,6 @@ object EdgeTest extends App {
 
   assert(edge1 != edge4)
   assert(edge4 != edge5)
+
 
 }

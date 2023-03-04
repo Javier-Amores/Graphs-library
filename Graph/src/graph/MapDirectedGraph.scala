@@ -9,6 +9,7 @@ object MapDirectedGraph {
 /**
  * Represents a directed graph, where each vertex is represented by a key in a mutable map, and
  * the value associated with each key is a mutable set of vertices representing the successors of that vertex.
+ *
  * @tparam V the type of vertices in the graph
  */
 class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
@@ -23,7 +24,7 @@ class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
 
   override def deleteVertex(vertex: V): Unit = if (containsVertex(vertex)) {
     succs -= vertex
-    for ((_,destinationSet) <- succs) {
+    for ((_, destinationSet) <- succs) {
       destinationSet remove vertex
     }
   }
@@ -31,41 +32,43 @@ class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def containsVertex(vertex: V): Boolean = succs.contains(vertex)
+  override def containsVertex(vertex: V): Boolean = succs.get(vertex) match {
+    case None => false
+    case Some(_) => true
+  }
 
   override def vertices: immutable.Set[V] = {
-    val immutableVertices = immutable.Set.empty ++ succs.keySet
+    val immutableVertices = immutable.Set.empty ++ succs.keys
     immutableVertices
   }
 
   override def order: Int = succs.size
 
-  override def successors(vertex: V): immutable.Set[V] = if (containsVertex(vertex)) {
-    val immutableSuccs = immutable.Set.empty ++ succs(vertex)
-    immutableSuccs
-  }
-  else {
-    throw GraphException(s"Vertex $vertex not found.")
+  override def successors(vertex: V): immutable.Set[V] = {
+    succs.get(vertex) match {
+      case None => throw GraphException(s"Vertex $vertex not found.")
+      case Some(successorSet) => immutable.Set.empty ++ successorSet
+    }
   }
 
   override def predecessors(vertex: V): immutable.Set[V] = if (containsVertex(vertex)) {
-    val predecessorSet = mutable.Set[V]()
-    for ((predecessor,destinationSet) <- succs) {
+    var predecessorSet = immutable.Set[V]()
+    for ((predecessor, destinationSet) <- succs) {
       if (destinationSet.contains(vertex)) {
-        predecessorSet += predecessor
+        predecessorSet = predecessorSet + predecessor
       }
     }
-    val immutablePredecessorSet = immutable.Set.empty ++ predecessorSet
-    immutablePredecessorSet
+    predecessorSet
   }
   else {
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def degree(vertex: V): Int = indegree(vertex)+outdegree(vertex)
+
+  override def degree(vertex: V): Int = indegree(vertex) + outdegree(vertex)
 
   override def indegree(vertex: V): Int = if (containsVertex(vertex)) {
-    var sum : Int = 0
+    var sum: Int = 0
     for ((_, destinationSet) <- succs) {
       if (destinationSet.contains(vertex)) {
         sum += 1
@@ -77,80 +80,76 @@ class MapDirectedGraph[V] extends DirectedGraph[V, DirectedEdge] {
     throw GraphException(s"Vertex $vertex not found.")
   }
 
-  override def outdegree(vertex: V): Int = if (containsVertex(vertex)) {
-    succs(vertex).size
+  override def outdegree(vertex: V): Int = {
+    succs.get(vertex) match {
+      case None => throw GraphException(s"Vertex $vertex not found.")
+      case Some(set) => set.size
+    }
   }
-  else {
-    throw GraphException(s"Vertex $vertex not found.")
-  }
+
 
   override def addEdge(source: V, destination: V): DirectedEdge[V] = {
     if (source == destination) {
       throw GraphException("Self-loops are not allowed in simple graphs")
     }
-    else {
-      val directedEdge = DirectedEdge(source, destination)
-      if (containsEdge(directedEdge)) {
-        throw GraphException(s"Edge $directedEdge is already in the graph.")
-      }
-      else if (!containsVertex(source)) {
-        throw GraphException(s"Vertex $source not found.")
-      }
-      else if (!containsVertex(destination)) {
-        throw GraphException(s"Vertex $destination not found.")
-      }
-      else {
-        succs(source) += destination
+    val directedEdge = DirectedEdge(source, destination)
+    if (containsEdge(directedEdge)) {
+      throw GraphException(s"Edge $directedEdge is already in the graph.")
+    }
+    succs.get(source) match {
+      case None => throw GraphException(s"Vertex $source not found.")
+      case Some(set) if containsVertex(destination) => set += destination
         directedEdge
-      }
+      case _ => throw GraphException(s"Vertex $destination not found.")
+    }
+  }
+
+  override def addEdge(edge: DirectedEdge[V]): Unit = {
+    if (containsEdge(edge)) {
+      throw GraphException(s"Edge $edge is already in the graph.")
+    }
+    if (edge.source == edge.destination) {
+      throw GraphException("Self-loops are not allowed in simple graphs")
     }
 
+    succs.get(edge.source) match {
+      case None => throw GraphException(s"Vertex ${edge.source} not found.")
+      case Some(set) if containsVertex(edge.destination) => set += edge.destination
+      case _ => throw GraphException(s"Vertex ${edge.destination} not found.")
+    }
   }
 
-  override def addEdge(edge: DirectedEdge[V]): Unit = if (containsEdge(edge)) {
-    throw GraphException(s"Edge $edge is already in the graph.")
-  }
-  else if (!containsVertex(edge.source)) {
-    throw GraphException(s"Vertex ${edge.source} not found.")
-  }
-  else if (edge.source == edge.destination) {
-    throw GraphException("Self-loops are not allowed in simple graphs")
-  }
-  else if (!containsVertex(edge.destination)) {
-    throw GraphException(s"Vertex ${edge.destination} not found.")
-  }
-  else {
-    succs(edge.source) += edge.destination
+  override def deleteEdge(edge: DirectedEdge[V]): Unit = {
+    if (!containsEdge(edge)) {
+      throw GraphException(s"Edge $edge not found.")
+    }
+    succs.get(edge.source) match {
+      case None => throw GraphException(s"Vertex ${edge.source} not found.")
+      case Some(set) if containsVertex(edge.destination) => set -= edge.destination
+      case _ => throw GraphException(s"Vertex ${edge.destination} not found.")
+    }
   }
 
-  override def deleteEdge(edge: DirectedEdge[V]): Unit = if (!containsEdge(edge)) {
-    throw GraphException(s"Edge $edge not found.")
-  }
-  else if (!containsVertex(edge.source)) {
-    throw GraphException(s"Vertex ${edge.source} not found.")
-  }
-  else if (!containsVertex(edge.destination)) {
-    throw GraphException(s"Vertex ${edge.destination} not found.")
-  }
-  else {
-    succs(edge.source) -= edge.destination
-  }
 
-  override def containsEdge(edge: DirectedEdge[V]): Boolean = containsVertex(edge.source) && (succs(edge.source) contains edge.destination)
+  override def containsEdge(edge: DirectedEdge[V]): Boolean = {
+    succs.get(edge.source) match {
+      case None => false
+      case Some(set) => set.contains(edge.destination)
+    }
+  }
 
   override def edges: immutable.Set[DirectedEdge[V]] = {
-    val edgeSet = mutable.Set[DirectedEdge[V]]()
-    for ((source, _) <- succs) {
-      succs(source).foreach(destination => edgeSet += DirectedEdge(source, destination))
+    var edgeSet = immutable.Set[DirectedEdge[V]]()
+    for ((source, destinationSet) <- succs) {
+      destinationSet.foreach(destination => edgeSet += DirectedEdge(source, destination))
     }
-    val finalEdgeSet = immutable.Set.empty ++ edgeSet
-    finalEdgeSet
+    edgeSet
   }
 
   override def size: Int = {
     var sum: Int = 0
-    for ((source, _) <- succs) {
-      sum += succs(source).size
+    for ((_, destinationSet) <- succs) {
+      sum += destinationSet.size
     }
     sum
   }

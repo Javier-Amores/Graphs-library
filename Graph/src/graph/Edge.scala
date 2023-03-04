@@ -9,6 +9,7 @@ object Edge {
 
 /**
  * Represents an edge connecting two vertices.
+ *
  * @param vertex1 one vertex of the edge
  * @param vertex2 the other vertex of the edge
  * @tparam V the type of vertices in the edge

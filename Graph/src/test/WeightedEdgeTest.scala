@@ -1,12 +1,12 @@
 import graph.WeightedEdge
 
-object WeightedEdgeTest extends App{
-  val weightedEdge1 = WeightedEdge("A","B",1)
-  val weightedEdge2 = WeightedEdge("A","B",1)
-  val weightedEdge3 = WeightedEdge("B","A",1)
-  val weightedEdge4 = WeightedEdge("B","A",-1)
-  val weightedEdge5 = WeightedEdge("C","D",1)
-  val weightedEdge6 = WeightedEdge("C","D",null)
+object WeightedEdgeTest extends App {
+  val weightedEdge1 = WeightedEdge("A", "B", 1)
+  val weightedEdge2 = WeightedEdge("A", "B", 1)
+  val weightedEdge3 = WeightedEdge("B", "A", 1)
+  val weightedEdge4 = WeightedEdge("B", "A", -1)
+  val weightedEdge5 = WeightedEdge("C", "D", 1)
+  val weightedEdge6 = WeightedEdge("C", "D", null)
 
   println(weightedEdge1)
   println(weightedEdge6)

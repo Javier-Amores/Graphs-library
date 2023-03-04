@@ -1,13 +1,13 @@
 import graph.DirectedWeightedEdge
 
-object DirectedWeightedEdgeTest extends App{
-  val directedWeightedEdge1 = DirectedWeightedEdge("A","B",3)
-  val directedWeightedEdge2 = DirectedWeightedEdge("A","B",3)
-  val directedWeightedEdge3 = DirectedWeightedEdge("B","A",3)
-  val directedWeightedEdge4 = DirectedWeightedEdge("B","A",5)
-  val directedWeightedEdge5 = DirectedWeightedEdge(1,2,"A")
-  val directedWeightedEdge6 = DirectedWeightedEdge(0,1,null)
-  val directedWeightedEdge7 = DirectedWeightedEdge(0,1,null)
+object DirectedWeightedEdgeTest extends App {
+  val directedWeightedEdge1 = DirectedWeightedEdge("A", "B", 3)
+  val directedWeightedEdge2 = DirectedWeightedEdge("A", "B", 3)
+  val directedWeightedEdge3 = DirectedWeightedEdge("B", "A", 3)
+  val directedWeightedEdge4 = DirectedWeightedEdge("B", "A", 5)
+  val directedWeightedEdge5 = DirectedWeightedEdge(1, 2, "A")
+  val directedWeightedEdge6 = DirectedWeightedEdge(0, 1, null)
+  val directedWeightedEdge7 = DirectedWeightedEdge(0, 1, null)
 
   println(directedWeightedEdge1)
 

@@ -1,10 +1,10 @@
 import graph.DirectedEdge
 
-object DirectedEdgeTest extends App{
-  val directedEdge1 = DirectedEdge(1,2)
-  val directedEdge2 = DirectedEdge(1,2)
-  val directedEdge3 = DirectedEdge(2,1)
-  val directedEdge4 = DirectedEdge(3,4)
+object DirectedEdgeTest extends App {
+  val directedEdge1 = DirectedEdge(1, 2)
+  val directedEdge2 = DirectedEdge(1, 2)
+  val directedEdge3 = DirectedEdge(2, 1)
+  val directedEdge4 = DirectedEdge(3, 4)
 
   println(directedEdge1)
 
