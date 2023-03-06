@@ -29,6 +29,10 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     checkRange(vertex)
     if (included(vertex)) {
       included(vertex) = false
+      matrix(vertex) = Array.fill(maxOrder)(false)
+      for (i <- 0 until maxOrder ) {
+        matrix(i)(vertex) = false
+      }
     } else {
       throw GraphException(s"Vertex $vertex not found.")
     }
