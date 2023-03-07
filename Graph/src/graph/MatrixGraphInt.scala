@@ -69,6 +69,8 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     checkRange(vertex1)
     checkRange(vertex2)
     checkLoop(vertex1, vertex2)
+    if (!included(vertex1)) {throw GraphException(s"vertex $vertex1 not found.")}
+    if (!included(vertex2)) {throw GraphException(s"vertex $vertex2 not found.")}
     val edge = Edge(vertex1, vertex2)
     if (containsEdge(edge)) {
       throw GraphException(s"$edge is already in the graph.")
@@ -83,6 +85,12 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     checkRange(edge.vertex1)
     checkRange(edge.vertex2)
     checkLoop(edge.vertex1, edge.vertex2)
+    if (!included(edge.vertex1)) {
+      throw GraphException(s"vertex ${edge.vertex1} not found.")
+    }
+    if (!included(edge.vertex2)) {
+      throw GraphException(s"vertex ${edge.vertex2} not found.")
+    }
     if (containsEdge(edge)) {
       throw GraphException(s"Edge $edge is already in the graph.")
     } else {
@@ -94,6 +102,12 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
   def deleteEdge(edge: Edge[Int]): Unit = {
     checkRange(edge.vertex1)
     checkRange(edge.vertex2)
+    if (!included(edge.vertex1)) {
+      throw GraphException(s"vertex ${edge.vertex1} not found.")
+    }
+    if (!included(edge.vertex2)) {
+      throw GraphException(s"vertex ${edge.vertex2} not found.")
+    }
     if (containsEdge(edge)) {
       matrix(edge.vertex1)(edge.vertex2) = false
       matrix(edge.vertex2)(edge.vertex1) = false

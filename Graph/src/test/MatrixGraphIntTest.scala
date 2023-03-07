@@ -17,5 +17,21 @@ object MatrixGraphIntTest extends App {
   assert(!g.containsVertex(8))
   assert(!g.containsEdge(Edge(0,8)))
 
+  println(g.vertices)
+  println("g order is = " + g.order)
+
+  val edge = g.addEdge(0,1)
+  assert(g.containsEdge(edge))
+  g.addEdge(Edge(4,1))
+  g.addEdge(Edge(7,9))
+  g.addEdge(Edge(4,2))
+  g.addEdge(Edge(4,7))
+
+  println("Successors of 4 = " + g.successors(4))
+  println("Degree of 4 = " + g.degree(4))
+
+  g.deleteEdge(edge)
+  println(g.edges)
+  println("size of g = " + g.size)
 
 }
