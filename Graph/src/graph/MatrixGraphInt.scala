@@ -30,7 +30,7 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     if (included(vertex)) {
       included(vertex) = false
       matrix(vertex) = Array.fill(maxOrder)(false)
-      for (i <- 0 until maxOrder ) {
+      for (i <- 0 until maxOrder) {
         matrix(i)(vertex) = false
       }
     } else {
@@ -53,12 +53,22 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
 
   def successors(vertex: Int): immutable.Set[Int] = {
     checkRange(vertex)
-    matrix(vertex).zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+    if (included(vertex)) {
+      matrix(vertex).zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
   def degree(vertex: Int): Int = {
     checkRange(vertex)
-    matrix(vertex).count(vertex => vertex)
+    if (included(vertex)) {
+      matrix(vertex).count(vertex => vertex)
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
   private def checkLoop(i: Int, j: Int): Unit =
@@ -69,8 +79,12 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     checkRange(vertex1)
     checkRange(vertex2)
     checkLoop(vertex1, vertex2)
-    if (!included(vertex1)) {throw GraphException(s"vertex $vertex1 not found.")}
-    if (!included(vertex2)) {throw GraphException(s"vertex $vertex2 not found.")}
+    if (!included(vertex1)) {
+      throw GraphException(s"vertex $vertex1 not found.")
+    }
+    if (!included(vertex2)) {
+      throw GraphException(s"vertex $vertex2 not found.")
+    }
     val edge = Edge(vertex1, vertex2)
     if (containsEdge(edge)) {
       throw GraphException(s"$edge is already in the graph.")
@@ -117,6 +131,8 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
   }
 
   def containsEdge(edge: Edge[Int]): Boolean = {
+    checkRange(edge.vertex1)
+    checkRange(edge.vertex2)
     matrix(edge.vertex1)(edge.vertex2)
   }
 
@@ -124,7 +140,10 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     var edgeSet = immutable.Set[Edge[Int]]()
     for (vertex <- 1 until maxOrder) {
       if (included(vertex)) {
-        matrix(vertex).take(vertex).zipWithIndex.collect{case (boolean,index) => if (boolean) {edgeSet += Edge(index,vertex)}}
+        matrix(vertex).take(vertex).zipWithIndex.collect { case (boolean, index) => if (boolean) {
+          edgeSet += Edge(index, vertex)
+        }
+        }
       }
     }
     edgeSet
@@ -132,8 +151,8 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
 
 
   def size: Int = {
-    var sum : Int = 0
-    for ( vertex <- 1 until  maxOrder) {
+    var sum: Int = 0
+    for (vertex <- 1 until maxOrder) {
       if (included(vertex)) {
         sum += matrix(vertex).take(vertex).count(edge => edge)
       }

@@ -1,7 +1,42 @@
-import graph.MatrixWeightedGraphInt
+import graph.{MatrixWeightedGraphInt, WeightedEdge}
 
 object MatrixWeightedGraphIntTest extends App {
 
   val g = MatrixWeightedGraphInt[Double](10)
+
+  g.addVertex(0)
+  g.addVertex(1)
+  g.addVertex(2)
+  g.addVertex(4)
+  g.addVertex(7)
+  g.addVertex(8)
+  g.addVertex(9)
+
+  g.addEdge(8, 0, 5.5)
+  g.deleteVertex(8)
+
+  assert(g.containsVertex(2))
+  assert(!g.containsVertex(8))
+  assert(!g.containsEdge(WeightedEdge(8, 0, 5.5)))
+
+  println(g.vertices)
+  println("g order is = " + g.order)
+
+  val edge = g.addEdge(0, 1)
+  g.addEdge(2, 1, 3.1415)
+  assert(g.containsEdge(edge))
+  g.addEdge(WeightedEdge(4, 1, 7.9))
+  g.addEdge(WeightedEdge(7, 9, 4.8))
+  g.addEdge(WeightedEdge(4, 2, 2.1))
+  g.addEdge(WeightedEdge(4, 7, 12.34))
+  g.addEdge(4, 9)
+
+  println("Successors of 4 = " + g.successors(4))
+  println("Successors and weights of 4 = " + g.successorsAndWeights(4))
+  println("Degree of 4 = " + g.degree(4))
+
+  g.deleteEdge(edge)
+  println(g.edges)
+  println("size of g = " + g.size)
 
 }

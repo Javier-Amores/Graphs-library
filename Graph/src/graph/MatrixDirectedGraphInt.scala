@@ -14,7 +14,7 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedGraph[Int, DirectedE
 
   private def checkRange(i: Int): Unit =
     if (!(0 <= i && i < maxOrder))
-      throw  GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
+      throw GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
 
   override def addVertex(vertex: Int): Unit = {
     checkRange(vertex)
@@ -50,38 +50,58 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedGraph[Int, DirectedE
   def order: Int = {
     included.count(vertex => vertex)
   }
+
   def successors(vertex: Int): immutable.Set[Int] = {
     checkRange(vertex)
-    matrix(vertex).zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+    if (included(vertex)) {
+      matrix(vertex).zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+    } else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
   def predecessors(vertex: Int): immutable.Set[Int] = {
     checkRange(vertex)
-    var predecessorSet = immutable.Set[Int]()
-    for (i <- 0 until maxOrder){
-      if (matrix(i)(vertex)) {
-        predecessorSet += i
+    if (included(vertex)) {
+      var predecessorSet = immutable.Set[Int]()
+      for (i <- 0 until maxOrder) {
+        if (matrix(i)(vertex)) {
+          predecessorSet += i
+        }
       }
+      predecessorSet
     }
-    predecessorSet
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
   def degree(vertex: Int): Int = indegree(vertex) + outdegree(vertex)
 
   def indegree(vertex: Int): Int = {
     checkRange(vertex)
-    var sum:Int = 0
-    for (i <- 0 until maxOrder) {
-      if (matrix(i)(vertex)) {
-        sum += 1
+    if (included(vertex)) {
+      var sum: Int = 0
+      for (i <- 0 until maxOrder) {
+        if (matrix(i)(vertex)) {
+          sum += 1
+        }
       }
+      sum
     }
-    sum
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
   def outdegree(vertex: Int): Int = {
     checkRange(vertex)
-    matrix(vertex).count(vertex => vertex)
+    if (included(vertex)) {
+      matrix(vertex).count(vertex => vertex)
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
   private def checkLoop(i: Int, j: Int): Unit =
@@ -92,6 +112,12 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedGraph[Int, DirectedE
     checkRange(source)
     checkRange(destination)
     checkLoop(source, destination)
+    if (!included(source)) {
+      throw GraphException(s"vertex ${source} not found.")
+    }
+    if (!included(destination)) {
+      throw GraphException(s"vertex ${destination} not found.")
+    }
     val edge = DirectedEdge(source, destination)
     if (containsEdge(edge)) {
       throw GraphException(s"$edge is already in the graph.")
@@ -134,7 +160,11 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedGraph[Int, DirectedE
     }
   }
 
-  def containsEdge(edge: DirectedEdge[Int]): Boolean = matrix(edge.source)(edge.destination)
+  def containsEdge(edge: DirectedEdge[Int]): Boolean = {
+    checkRange(edge.source)
+    checkRange(edge.destination)
+    matrix(edge.source)(edge.destination)
+  }
 
   def edges: immutable.Set[DirectedEdge[Int]] = {
     var edgeSet = immutable.Set[DirectedEdge[Int]]()

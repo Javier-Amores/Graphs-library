@@ -17,7 +17,7 @@ object MatrixDirectedGraphIntTest extends App {
 
   assert(g.containsVertex(2))
   assert(!g.containsVertex(8))
-  assert(!g.containsEdge(DirectedEdge(0, 8)))
+  assert(!g.containsEdge(DirectedEdge(8, 0)))
 
   println(g.vertices)
   println("g order is = " + g.order)
@@ -30,8 +30,8 @@ object MatrixDirectedGraphIntTest extends App {
   g.addEdge(DirectedEdge(4, 7))
 
   println("Successors of 4 = " + g.successors(4))
-  println("predecessors of 4 = "+g.predecessors(4))
-  println("predecessors of 9 = "+g.predecessors(9))
+  println("predecessors of 4 = " + g.predecessors(4))
+  println("predecessors of 9 = " + g.predecessors(9))
   println("Indegree of 4 = " + g.indegree(4))
   println("Outdegree of 4 = " + g.outdegree(4))
 
