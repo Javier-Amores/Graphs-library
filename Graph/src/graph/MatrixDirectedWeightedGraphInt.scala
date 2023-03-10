@@ -8,6 +8,11 @@ object MatrixDirectedWeightedGraphInt {
 }
 
 
+/**
+ * Represents a directed weighted graph with integer vertices and directed weighted edges using an adjacency matrix.
+ * @param maxOrder maximum number of vertices that the graph can hold
+ * @tparam W the type of weights in the graph
+ */
 class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends DirectedWeightedGraph[Int, W, DirectedWeightedEdge] {
   // included(i) == true if vertex i was added to graph
   private val included = Array.fill(maxOrder)(false)
@@ -24,6 +29,11 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
   }
 
 
+  /**
+   * Throws an exception if the specified vertex is not within the valid range of vertices.
+   *
+   * @param i the vertex to check
+   */
   private def checkRange(i: Int): Unit =
     if (!(0 <= i && i < maxOrder))
       throw GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
@@ -109,7 +119,7 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
     checkRange(vertex)
     if (included(vertex)) {
       var predecessorSet = immutable.Set[(Int, W)]()
-      var predecessor:(Int,W) = (0,null.asInstanceOf[W])
+      var predecessor: (Int, W) = (0, null.asInstanceOf[W])
       for (i <- 0 until maxOrder) {
         matrix(i)(vertex) match {
           case Some(weight) => predecessor = (i, weight)
@@ -164,6 +174,13 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
     }
   }
 
+  /**
+   * Checks whether the source vertex and destination vertex of an edge are the same vertex (a self-loop).
+   * If a self-loop is detected, a GraphException is thrown.
+   *
+   * @param i i The index of the source vertex
+   * @param j The index of the destination vertex
+   */
   private def checkLoop(i: Int, j: Int): Unit =
     if (i == j)
       throw GraphException(s"Self-loops are not allowed in simple graphs.")
@@ -249,6 +266,12 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
     }
   }
 
+  /**
+   * Checks if the graph contains an edge regardless of the weight.
+   *
+   * @param edge the edge to check
+   * @return true if the graph contains the edge, false otherwise
+   */
   private def containsEdgeAnyWeight(edge: DirectedEdge[Int]): Boolean = {
     matrix(edge.source)(edge.destination) match {
       case Some(_) => true

@@ -7,6 +7,11 @@ object MatrixWeightedGraphInt {
   def apply[W: ClassTag](maxOrder: Int): MatrixWeightedGraphInt[W] = new MatrixWeightedGraphInt(maxOrder)
 }
 
+/**
+ * Represents a weighted graph with integer vertices using an adjacency matrix.
+ * @param maxOrder maximum number of vertices that the graph can hold
+ * @tparam W the type of the weights associated with the edges
+ */
 class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends WeightedGraph[Int, W, WeightedEdge] {
   // included(i) == true if vertex i was added to graph
   private val included = Array.fill(maxOrder)(false)
@@ -22,6 +27,10 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends WeightedGraph[I
     nullMatrix
   }
 
+  /**
+   * Throws an exception if the specified vertex is not within the valid range of vertices.
+   * @param i the vertex to check
+   */
   private def checkRange(i: Int): Unit =
     if (!(0 <= i && i < maxOrder))
       throw GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
@@ -103,6 +112,13 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends WeightedGraph[I
     }
   }
 
+  /**
+   * Checks whether the endvertices of an edge are the same vertex (a self-loop).
+   * If a self-loop is detected, a GraphException is thrown.
+   *
+   * @param i i The index of one vertex
+   * @param j The index of the other vertex
+   */
   private def checkLoop(i: Int, j: Int): Unit =
     if (i == j)
       throw GraphException(s"Self-loops are not allowed in simple graphs.")
@@ -195,6 +211,12 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends WeightedGraph[I
     }
   }
 
+  /**
+   * Checks if the graph contains an edge regardless of the weight.
+   *
+   * @param edge the edge to check
+   * @return true if the graph contains the edge, false otherwise
+   */
   private def containsEdgeAnyWeight(edge: Edge[Int]): Boolean = {
     matrix(edge.vertex1)(edge.vertex2) match {
       case Some(_) => true

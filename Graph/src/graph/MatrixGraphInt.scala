@@ -6,12 +6,20 @@ object MatrixGraphInt {
   def apply(maxOrder: Int): MatrixGraphInt = new MatrixGraphInt(maxOrder)
 }
 
+/**
+ * Represents a graph with integer vertices using an adjacency matrix to represent edges.
+ * @param maxOrder maximum number of vertices that the graph can hold
+ */
 class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
   // included(i) == true if vertex i was added to graph
   private val included = Array.fill(maxOrder)(false)
   // adjacency matrix for representing edges
   private val matrix = Array.ofDim[Boolean](maxOrder, maxOrder)
 
+  /**
+   * Throws an exception if the specified vertex is not within the valid range of vertices.
+   * @param i the vertex to check
+   */
   private def checkRange(i: Int): Unit =
     if (!(0 <= i && i < maxOrder))
       throw GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
@@ -71,6 +79,13 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     }
   }
 
+  /**
+   * Checks whether the endvertices of an edge are the same vertex (a self-loop).
+   * If a self-loop is detected, a GraphException is thrown.
+   *
+   * @param i i The index of one vertex
+   * @param j The index of the other vertex
+   */
   private def checkLoop(i: Int, j: Int): Unit =
     if (i == j)
       throw GraphException(s"Self-loops are not allowed in simple graphs.")
