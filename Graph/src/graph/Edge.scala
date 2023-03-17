@@ -8,13 +8,17 @@ object Edge {
 }
 
 /**
- * Represents an edge connecting two vertices.
+ * A class representing an undirected, unweighted edge.
  *
- * @param vertex1 one vertex of the edge
- * @param vertex2 the other vertex of the edge
- * @tparam V the type of vertices in the edge
+ * @param _v1 the first vertex of the edge
+ * @param _v2 the second vertex of the edge
+ * @tparam V the type of the vertices in the edge
  */
-class Edge[V](val vertex1: V, val vertex2: V) {
+class Edge[+V](protected val _v1: V, protected val _v2: V) extends IsEdge[V] {
+  override def vertex1: V = _v1
+
+  override def vertex2: V = _v2
+
   override def equals(other: Any): Boolean = other match {
     case that: Edge[V] =>
       (that canEqual this) &&
@@ -30,4 +34,5 @@ class Edge[V](val vertex1: V, val vertex2: V) {
   }
 
   override def toString: String = s"${getClass.getSimpleName}($vertex1, $vertex2)"
+
 }

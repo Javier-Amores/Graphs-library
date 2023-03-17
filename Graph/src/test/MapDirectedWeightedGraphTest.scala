@@ -16,6 +16,7 @@ object MapDirectedWeightedGraphTest extends App {
   g.addEdge(DirectedWeightedEdge("G", "F", 100))
   g.addEdge(DirectedWeightedEdge("F", "G", 20))
 
+
   g.deleteVertex("G")
 
   assert(g.containsVertex("A"))
@@ -35,18 +36,27 @@ object MapDirectedWeightedGraphTest extends App {
   g.addEdge(DirectedWeightedEdge("E", "B", 4))
   g.addEdge(DirectedWeightedEdge("E", "F", 5))
   g.addEdge(DirectedWeightedEdge("F", "E", 5))
-  g.addEdge("B", "A")
+  g.addEdge("C", "D", 10)
+  g.addEdge("B", "A", 0)
   g.addEdge("F", "D", 12)
 
   g.deleteEdge(DirectedWeightedEdge("C", "A", 72))
+  g.deleteEdge("E", "F")
+  g.deleteEdge("B", "C", 7)
 
   assert(g.containsEdge(DirectedWeightedEdge("F", "E", 5)))
+  assert(!g.containsEdge("F", "F"))
   assert(!g.containsEdge(DirectedWeightedEdge("C", "A", 72)))
+  assert(g.containsEdge("C", "D"))
+  assert(g.containsEdge("E", "A", 54))
+  assert(!g.containsEdge("E", "A", 4))
 
   println("successors of A = " + g.successors("A"))
   println("predecessors of A = " + g.predecessors("A"))
-  println("successors and weights of A = " + g.successorsAndWeights("A"))
-  println("predecessors and weights of A = " + g.predecessorsAndWeights("A"))
+  //println("successors and weights of A = " + g.successorsAndWeights("A"))
+  //println("predecessors and weights of A = " + g.predecessorsAndWeights("A"))
+  println("incidentsFrom of A = " + g.incidentsFrom("A"))
+  println("incidentsTo of A = " + g.incidentsTo("A"))
 
 
   println(g.edges)
@@ -54,6 +64,7 @@ object MapDirectedWeightedGraphTest extends App {
   println(g.indegree("A"))
   println(g.outdegree("A"))
   println(g.degree("A"))
+  println("weight of edge (F,D) = " + g.weightOfEdge("F", "D").get)
 
 
 }

@@ -9,16 +9,18 @@ object WeightedEdge {
 }
 
 /**
- * A weighted edge between two vertices.
+ * A class representing a weighted edge.
  *
- * @param vertex1 one vertex of the edge
- * @param vertex2 the other vertex of the edge
- * @param weight  the weight of the edge
- * @tparam V the type of vertices in the edge
- * @tparam W the type of the weight
+ * @param _v1 the first vertex of the edge
+ * @param _v2 the second vertex of the edge
+ * @param _w  the weight value of the edge
+ * @tparam V the type of the vertices in the edge
+ * @tparam W the type of the weight in the weighted edge
  */
-// A weighted undirected edge.
-class WeightedEdge[V, W](vertex1: V, vertex2: V, val weight: W) extends Edge[V](vertex1, vertex2) {
+class WeightedEdge[+V, +W](override protected val _v1: V, override protected val _v2: V, protected val _w: W)
+  extends Edge[V](_v1, _v2) with IsWeightedEdge[V, W] {
+  override def weight: W = _w
+
   override def equals(other: Any): Boolean = other match {
     case that: WeightedEdge[V, W] =>
       (that canEqual this) &&
@@ -38,5 +40,5 @@ class WeightedEdge[V, W](vertex1: V, vertex2: V, val weight: W) extends Edge[V](
   }
 
   override def toString: String = s"${getClass.getSimpleName}($vertex1, $vertex2, $weight)"
-}
 
+}

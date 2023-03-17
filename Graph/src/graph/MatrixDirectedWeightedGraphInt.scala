@@ -10,15 +10,15 @@ object MatrixDirectedWeightedGraphInt {
 
 /**
  * Represents a directed weighted graph with integer vertices and directed weighted edges using an adjacency matrix.
+ *
  * @param maxOrder maximum number of vertices that the graph can hold
  * @tparam W the type of weights in the graph
  */
-class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends DirectedWeightedGraph[Int, W, DirectedWeightedEdge] {
+class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends DirectedWeightedGraph[Int, W] {
   // included(i) == true if vertex i was added to graph
   private val included = Array.fill(maxOrder)(false)
   // adjacency matrix for representing edges
   //Some(w) => The edge exists and has weight w
-  //null => The edge exists but has no weight.
   //None => the edge doesn't exist
   private val matrix = {
     val nullMatrix = Array.ofDim[Option[W]](maxOrder, maxOrder)
@@ -38,16 +38,22 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
     if (!(0 <= i && i < maxOrder))
       throw GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
 
-  override def addVertex(vertex: Int): Unit = {
+  override def addVertex(vertex: Int): Boolean = {
     checkRange(vertex)
     if (included(vertex)) {
-      throw GraphException(s"Vertex $vertex is already in the graph.")
+      false
     } else {
       included(vertex) = true
+      true
     }
   }
 
-  def deleteVertex(vertex: Int): Unit = {
+  override def containsVertex(vertex: Int): Boolean = {
+    checkRange(vertex)
+    included(vertex)
+  }
+
+  override def deleteVertex(vertex: Int): Boolean = {
     checkRange(vertex)
     if (included(vertex)) {
       included(vertex) = false
@@ -55,246 +61,119 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
       for (i <- 0 until maxOrder) {
         matrix(i)(vertex) = None
       }
+      true
     } else {
-      throw GraphException(s"Vertex $vertex not found.")
+      false
     }
   }
 
-  def containsVertex(vertex: Int): Boolean = {
-    checkRange(vertex)
-    included(vertex)
-  }
-
-  def vertices: immutable.Set[Int] = {
-    included.zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
-  }
-
-  def order: Int = {
+  override def order: Int = {
     included.count(vertex => vertex)
   }
 
-  def successors(vertex: Int): immutable.Set[Int] = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      matrix(vertex).zipWithIndex.collect { case (Some(_), index) => index
-      case (null, index) => index
-      }.toSet
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  def predecessors(vertex: Int): immutable.Set[Int] = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      var predecessorSet = immutable.Set[Int]()
-      for (i <- 0 until maxOrder) {
-        matrix(i)(vertex) match {
-          case Some(_) => predecessorSet += i
-          case null => predecessorSet += i
-          case None =>
-        }
-      }
-      predecessorSet
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  def successorsAndWeights(vertex: Int): immutable.Set[(Int, W)] = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      matrix(vertex).zipWithIndex.collect { case (Some(weight), index) => (index, weight)
-      case (null, index) => (index, null.asInstanceOf[W])
-      }.toSet
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  def predecessorsAndWeights(vertex: Int): immutable.Set[(Int, W)] = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      var predecessorSet = immutable.Set[(Int, W)]()
-      var predecessor: (Int, W) = (0, null.asInstanceOf[W])
-      for (i <- 0 until maxOrder) {
-        matrix(i)(vertex) match {
-          case Some(weight) => predecessor = (i, weight)
-            predecessorSet += predecessor
-          case null => predecessor = (i, null.asInstanceOf[W])
-            predecessorSet += predecessor
-          case None =>
-        }
-      }
-      predecessorSet
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  def degree(vertex: Int): Int = indegree(vertex) + outdegree(vertex)
-
-  def indegree(vertex: Int): Int = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      var sum: Int = 0
-      for (i <- 0 until maxOrder) {
-        matrix(i)(vertex) match {
-          case Some(_) => sum += 1
-          case null => sum += 1
-          case None =>
-        }
-      }
-      sum
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  def outdegree(vertex: Int): Int = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      var sum: Int = 0
-      for (i <- matrix(vertex)) {
-        i match {
-          case Some(_) => sum += 1
-          case null => sum += 1
-          case None =>
-        }
-      }
-      sum
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  /**
-   * Checks whether the source vertex and destination vertex of an edge are the same vertex (a self-loop).
-   * If a self-loop is detected, a GraphException is thrown.
-   *
-   * @param i i The index of the source vertex
-   * @param j The index of the destination vertex
-   */
-  private def checkLoop(i: Int, j: Int): Unit =
-    if (i == j)
-      throw GraphException(s"Self-loops are not allowed in simple graphs.")
-
-  def addEdge(source: Int, destination: Int): DirectedWeightedEdge[Int, W] = {
+  override def addEdge(source: Int, destination: Int, weight: W): Boolean = {
     checkRange(source)
     checkRange(destination)
-    checkLoop(source, destination)
-    if (!included(source)) {
-      throw GraphException(s"vertex $source not found.")
-    }
-    if (!included(destination)) {
-      throw GraphException(s"vertex $destination not found.")
-    }
-    val edge = DirectedWeightedEdge(source, destination, null.asInstanceOf[W])
-    if (containsEdgeAnyWeight(edge)) {
-      throw GraphException(s"${DirectedEdge(source, destination)} is already in the graph.")
-    } else {
-      matrix(source)(destination) = null
-      edge
-    }
-  }
-
-  def addEdge(source: Int, destination: Int, weight: W): DirectedWeightedEdge[Int, W] = {
-    checkRange(source)
-    checkRange(destination)
-    checkLoop(source, destination)
-    if (!included(source)) {
-      throw GraphException(s"vertex $source not found.")
-    }
-    if (!included(destination)) {
-      throw GraphException(s"vertex $destination not found.")
-    }
-    val edge = DirectedWeightedEdge(source, destination, weight)
-    if (containsEdgeAnyWeight(edge)) {
-      throw GraphException(s"${DirectedEdge(source, destination)} is already in the graph.")
+    if (source == destination || containsEdge(source, destination)) {
+      false
     } else {
       matrix(source)(destination) = Some(weight)
-      edge
+      true
     }
   }
 
-  def addEdge(edge: DirectedWeightedEdge[Int, W]): Unit = {
-    checkRange(edge.source)
-    checkRange(edge.destination)
-    checkLoop(edge.source, edge.destination)
-    if (!included(edge.source)) {
-      throw GraphException(s"vertex ${edge.source} not found.")
-    }
-    if (!included(edge.destination)) {
-      throw GraphException(s"vertex ${edge.destination} not found.")
-    }
-    if (containsEdgeAnyWeight(edge)) {
-      throw GraphException(s"${DirectedEdge(edge.source, edge.destination)} is already in the graph.")
+  override def addEdge(directedWeightedEdge: DirectedWeightedEdge[Int, W]): Boolean = {
+    checkRange(directedWeightedEdge.source)
+    checkRange(directedWeightedEdge.destination)
+    if (directedWeightedEdge.source == directedWeightedEdge.destination || containsEdge(directedWeightedEdge.source, directedWeightedEdge.destination)) {
+      false
     } else {
-      matrix(edge.source)(edge.destination) = Some(edge.weight)
+      matrix(directedWeightedEdge.source)(directedWeightedEdge.destination) = Some(directedWeightedEdge.weight)
+      true
     }
   }
 
-  def deleteEdge(edge: DirectedWeightedEdge[Int, W]): Unit = {
-    checkRange(edge.source)
-    checkRange(edge.destination)
-    if (!included(edge.source)) {
-      throw GraphException(s"vertex ${edge.source} not found.")
-    }
-    if (!included(edge.destination)) {
-      throw GraphException(s"vertex ${edge.destination} not found.")
-    }
-    if (containsEdge(edge)) {
-      matrix(edge.source)(edge.destination) = None
-    } else {
-      throw GraphException(s"Edge $edge not found.")
-    }
-  }
-
-  def containsEdge(edge: DirectedWeightedEdge[Int, W]): Boolean = {
-    checkRange(edge.source)
-    checkRange(edge.destination)
-    matrix(edge.source)(edge.destination) match {
-      case Some(weight) if weight == edge.weight => true
-      case null if null.asInstanceOf[W] == edge.weight => true
-      case _ => false
-    }
-  }
-
-  /**
-   * Checks if the graph contains an edge regardless of the weight.
-   *
-   * @param edge the edge to check
-   * @return true if the graph contains the edge, false otherwise
-   */
-  private def containsEdgeAnyWeight(edge: DirectedEdge[Int]): Boolean = {
-    matrix(edge.source)(edge.destination) match {
+  override def containsEdge(source: Int, destination: Int): Boolean = {
+    matrix(source)(destination) match {
       case Some(_) => true
-      case null => true
       case None => false
     }
   }
 
-  def edges: immutable.Set[DirectedWeightedEdge[Int, W]] = {
-    var edgeSet = immutable.Set[DirectedWeightedEdge[Int, W]]()
+  override def containsEdge(source: Int, destination: Int, weight: W): Boolean = {
+    checkRange(source)
+    checkRange(destination)
+    matrix(source)(destination) match {
+      case Some(weight2) if weight == weight2 => true
+      case _ => false
+    }
+  }
+
+  override def containsEdge(directedWeightedEdge: DirectedWeightedEdge[Int, W]): Boolean = {
+    checkRange(directedWeightedEdge.source)
+    checkRange(directedWeightedEdge.destination)
+    matrix(directedWeightedEdge.source)(directedWeightedEdge.destination) match {
+      case Some(weight) if weight == directedWeightedEdge.weight => true
+      case _ => false
+    }
+  }
+
+  override def deleteEdge(source: Int, destination: Int): Boolean = {
+    checkRange(source)
+    checkRange(destination)
+    if (containsEdge(source, destination)) {
+      matrix(source)(destination) = None
+      true
+    } else {
+      false
+    }
+  }
+
+  override def deleteEdge(source: Int, destination: Int, weight: W): Boolean = {
+    checkRange(source)
+    checkRange(destination)
+    if (containsEdge(source, destination, weight)) {
+      matrix(source)(destination) = None
+      true
+    } else {
+      false
+    }
+  }
+
+  override def deleteEdge(directedWeightedEdge: DirectedWeightedEdge[Int, W]): Boolean = {
+    checkRange(directedWeightedEdge.source)
+    checkRange(directedWeightedEdge.destination)
+    if (containsEdge(directedWeightedEdge)) {
+      matrix(directedWeightedEdge.source)(directedWeightedEdge.destination) = None
+      true
+    } else {
+      false
+    }
+  }
+
+  override def edges[Edge[X] >: DirectedWeightedEdge[X, W]]: immutable.Set[Edge[Int]] = {
+    var edgeSet = immutable.Set[Edge[Int]]()
     for (vertex <- 0 until maxOrder) {
       if (included(vertex)) {
         matrix(vertex).zipWithIndex.collect { case (Some(weight), index) =>
           edgeSet += DirectedWeightedEdge(vertex, index, weight)
-
-        case (null, index) => edgeSet += DirectedWeightedEdge(vertex, index, null.asInstanceOf[W])
         }
       }
     }
     edgeSet
   }
 
-  def size: Int = {
+  override def vertices: immutable.Set[Int] = {
+    included.zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+  }
+
+  override def weightOfEdge(source: Int, destination: Int): Option[W] = {
+    checkRange(source)
+    checkRange(destination)
+    matrix(source)(destination)
+  }
+
+  override def size: Int = {
     var sum: Int = 0
     for (vertex <- 0 until maxOrder) {
       if (included(vertex)) {
@@ -308,5 +187,96 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
       }
     }
     sum
+  }
+
+  override def successors(source: Int): immutable.Set[Int] = {
+    checkRange(source)
+    if (included(source)) {
+      matrix(source).zipWithIndex.collect { case (Some(_), index) => index
+      }.toSet
+    }
+    else {
+      throw GraphException(s"vertex $source not found.")
+    }
+  }
+
+  override def predecessors(destination: Int): immutable.Set[Int] = {
+    checkRange(destination)
+    if (included(destination)) {
+      var predecessorSet = immutable.Set[Int]()
+      for (i <- 0 until maxOrder) {
+        matrix(i)(destination) match {
+          case Some(_) => predecessorSet += i
+          case None =>
+        }
+      }
+      predecessorSet
+    }
+    else {
+      throw GraphException(s"vertex $destination not found.")
+    }
+  }
+
+  override def incidentsFrom[Edge[X] >: DirectedWeightedEdge[X, W]](source: Int): immutable.Set[Edge[Int]] = {
+    checkRange(source)
+    if (included(source)) {
+      var edgeSet = immutable.Set[Edge[Int]]()
+      matrix(source).zipWithIndex.foreach { case (Some(weight), index) => edgeSet += DirectedWeightedEdge(source, index, weight); case _ => }
+      edgeSet
+    }
+    else {
+      throw GraphException(s"vertex $source not found.")
+    }
+  }
+
+  override def incidentsTo[Edge[X] >: DirectedWeightedEdge[X, W]](destination: Int): immutable.Set[Edge[Int]] = {
+    checkRange(destination)
+    if (included(destination)) {
+      var edgeSet = immutable.Set[Edge[Int]]()
+      for (i <- 0 until maxOrder) {
+        matrix(i)(destination) match {
+          case Some(weight) => edgeSet += DirectedWeightedEdge(i, destination, weight)
+          case None =>
+        }
+      }
+      edgeSet
+    }
+    else {
+      throw GraphException(s"vertex $destination not found.")
+    }
+  }
+
+  override def outdegree(source: Int): Int = {
+    checkRange(source)
+    if (included(source)) {
+      var sum: Int = 0
+      for (i <- matrix(source)) {
+        i match {
+          case Some(_) => sum += 1
+          case None =>
+        }
+      }
+      sum
+    }
+    else {
+      throw GraphException(s"vertex $source not found.")
+    }
+  }
+
+  override def indegree(destination: Int): Int = {
+    checkRange(destination)
+    if (included(destination)) {
+      var sum: Int = 0
+      for (i <- 0 until maxOrder) {
+        matrix(i)(destination) match {
+          case Some(_) => sum += 1
+          case None =>
+        }
+      }
+      sum
+    }
+    else {
+      throw GraphException(s"vertex $destination not found.")
+    }
   }
 }

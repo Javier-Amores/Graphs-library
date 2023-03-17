@@ -22,20 +22,29 @@ object MatrixDirectedGraphIntTest extends App {
   println(g.vertices)
   println("g order is = " + g.order)
 
-  val edge = g.addEdge(0, 1)
-  assert(g.containsEdge(edge))
+  //val edge = g.addEdge(0, 1)
+  //assert(g.containsEdge(edge))
+
   g.addEdge(DirectedEdge(4, 1))
   g.addEdge(DirectedEdge(7, 9))
   g.addEdge(DirectedEdge(4, 2))
   g.addEdge(DirectedEdge(4, 7))
+  g.addEdge(1, 2)
+
+  assert(g.containsEdge(1, 2))
+  assert(g.containsEdge(DirectedEdge(4, 7)))
 
   println("Successors of 4 = " + g.successors(4))
   println("predecessors of 4 = " + g.predecessors(4))
   println("predecessors of 9 = " + g.predecessors(9))
   println("Indegree of 4 = " + g.indegree(4))
   println("Outdegree of 4 = " + g.outdegree(4))
+  println("degree of 4= " + g.degree(4))
 
-  g.deleteEdge(edge)
+  g.deleteEdge(1, 2)
+  g.deleteEdge(DirectedEdge(4, 1))
   println(g.edges)
+  println(g.incidentsFrom(4))
+  println(g.incidentsTo(2))
   println("size of g = " + g.size)
 }

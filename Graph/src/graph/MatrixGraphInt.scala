@@ -1,6 +1,6 @@
 package graph
 
-import scala.collection.immutable
+import scala.collection.{immutable, mutable}
 
 object MatrixGraphInt {
   def apply(maxOrder: Int): MatrixGraphInt = new MatrixGraphInt(maxOrder)
@@ -8,9 +8,10 @@ object MatrixGraphInt {
 
 /**
  * Represents a graph with integer vertices using an adjacency matrix to represent edges.
+ *
  * @param maxOrder maximum number of vertices that the graph can hold
  */
-class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
+class MatrixGraphInt(maxOrder: Int) extends UndirectedUnweightedGraph[Int] {
   // included(i) == true if vertex i was added to graph
   private val included = Array.fill(maxOrder)(false)
   // adjacency matrix for representing edges
@@ -18,22 +19,29 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
 
   /**
    * Throws an exception if the specified vertex is not within the valid range of vertices.
+   *
    * @param i the vertex to check
    */
   private def checkRange(i: Int): Unit =
     if (!(0 <= i && i < maxOrder))
       throw GraphException(s"Vertex $i cannot be included in graph. Order is $maxOrder")
 
-  override def addVertex(vertex: Int): Unit = {
+  override def addVertex(vertex: Int): Boolean = {
     checkRange(vertex)
     if (included(vertex)) {
-      throw GraphException(s"Vertex $vertex is already in the graph.")
+      false
     } else {
       included(vertex) = true
+      true
     }
   }
 
-  def deleteVertex(vertex: Int): Unit = {
+  override def containsVertex(vertex: Int): Boolean = {
+    checkRange(vertex)
+    included(vertex)
+  }
+
+  override def deleteVertex(vertex: Int): Boolean = {
     checkRange(vertex)
     if (included(vertex)) {
       included(vertex) = false
@@ -41,118 +49,78 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
       for (i <- 0 until maxOrder) {
         matrix(i)(vertex) = false
       }
+      true
     } else {
-      throw GraphException(s"Vertex $vertex not found.")
+      false
     }
   }
 
-  def containsVertex(vertex: Int): Boolean = {
-    checkRange(vertex)
-    included(vertex)
-  }
-
-  def vertices: immutable.Set[Int] = {
-    included.zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
-  }
-
-  def order: Int = {
+  override def order: Int = {
     included.count(vertex => vertex)
   }
 
-  def successors(vertex: Int): immutable.Set[Int] = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      matrix(vertex).zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  def degree(vertex: Int): Int = {
-    checkRange(vertex)
-    if (included(vertex)) {
-      matrix(vertex).count(vertex => vertex)
-    }
-    else {
-      throw GraphException(s"vertex $vertex not found.")
-    }
-  }
-
-  /**
-   * Checks whether the endvertices of an edge are the same vertex (a self-loop).
-   * If a self-loop is detected, a GraphException is thrown.
-   *
-   * @param i i The index of one vertex
-   * @param j The index of the other vertex
-   */
-  private def checkLoop(i: Int, j: Int): Unit =
-    if (i == j)
-      throw GraphException(s"Self-loops are not allowed in simple graphs.")
-
-  def addEdge(vertex1: Int, vertex2: Int): Edge[Int] = {
+  override def addEdge(vertex1: Int, vertex2: Int): Boolean = {
     checkRange(vertex1)
     checkRange(vertex2)
-    checkLoop(vertex1, vertex2)
-    if (!included(vertex1)) {
-      throw GraphException(s"vertex $vertex1 not found.")
-    }
-    if (!included(vertex2)) {
-      throw GraphException(s"vertex $vertex2 not found.")
-    }
-    val edge = Edge(vertex1, vertex2)
-    if (containsEdge(edge)) {
-      throw GraphException(s"$edge is already in the graph.")
+    if (vertex1 == vertex2 || containsEdge(vertex1, vertex2)) {
+      false
     } else {
       matrix(vertex1)(vertex2) = true
       matrix(vertex2)(vertex1) = true
-      edge
+      true
     }
   }
 
-  def addEdge(edge: Edge[Int]): Unit = {
+  override def addEdge(edge: Edge[Int]): Boolean = {
     checkRange(edge.vertex1)
     checkRange(edge.vertex2)
-    checkLoop(edge.vertex1, edge.vertex2)
-    if (!included(edge.vertex1)) {
-      throw GraphException(s"vertex ${edge.vertex1} not found.")
-    }
-    if (!included(edge.vertex2)) {
-      throw GraphException(s"vertex ${edge.vertex2} not found.")
-    }
-    if (containsEdge(edge)) {
-      throw GraphException(s"Edge $edge is already in the graph.")
+    if (edge.vertex1 == edge.vertex2 || containsEdge(edge)) {
+      false
     } else {
       matrix(edge.vertex1)(edge.vertex2) = true
       matrix(edge.vertex2)(edge.vertex1) = true
+      true
     }
   }
 
-  def deleteEdge(edge: Edge[Int]): Unit = {
-    checkRange(edge.vertex1)
-    checkRange(edge.vertex2)
-    if (!included(edge.vertex1)) {
-      throw GraphException(s"vertex ${edge.vertex1} not found.")
-    }
-    if (!included(edge.vertex2)) {
-      throw GraphException(s"vertex ${edge.vertex2} not found.")
-    }
-    if (containsEdge(edge)) {
-      matrix(edge.vertex1)(edge.vertex2) = false
-      matrix(edge.vertex2)(edge.vertex1) = false
-    } else {
-      throw GraphException(s"Edge $edge not found.")
-    }
+  override def containsEdge(vertex1: Int, vertex2: Int): Boolean = {
+    checkRange(vertex1)
+    checkRange(vertex2)
+    matrix(vertex1)(vertex2)
   }
 
-  def containsEdge(edge: Edge[Int]): Boolean = {
+  override def containsEdge(edge: Edge[Int]): Boolean = {
     checkRange(edge.vertex1)
     checkRange(edge.vertex2)
     matrix(edge.vertex1)(edge.vertex2)
   }
 
-  def edges: immutable.Set[Edge[Int]] = {
-    var edgeSet = immutable.Set[Edge[Int]]()
+  override def deleteEdge(vertex1: Int, vertex2: Int): Boolean = {
+    checkRange(vertex1)
+    checkRange(vertex2)
+    if (containsEdge(vertex1, vertex2)) {
+      matrix(vertex1)(vertex2) = false
+      matrix(vertex2)(vertex1) = false
+      true
+    } else {
+      false
+    }
+  }
+
+  override def deleteEdge(edge: Edge[Int]): Boolean = {
+    checkRange(edge.vertex1)
+    checkRange(edge.vertex2)
+    if (containsEdge(edge)) {
+      matrix(edge.vertex1)(edge.vertex2) = false
+      matrix(edge.vertex2)(edge.vertex1) = false
+      true
+    } else {
+      false
+    }
+  }
+
+  override def edges[E[X] >: Edge[X]]: immutable.Set[E[Int]] = {
+    var edgeSet = immutable.Set[E[Int]]()
     for (vertex <- 1 until maxOrder) {
       if (included(vertex)) {
         matrix(vertex).take(vertex).zipWithIndex.collect { case (boolean, index) => if (boolean) {
@@ -164,8 +132,11 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
     edgeSet
   }
 
+  override def vertices: immutable.Set[Int] = {
+    included.zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+  }
 
-  def size: Int = {
+  override def size: Int = {
     var sum: Int = 0
     for (vertex <- 1 until maxOrder) {
       if (included(vertex)) {
@@ -173,6 +144,63 @@ class MatrixGraphInt(maxOrder: Int) extends Graph[Int, Edge] {
       }
     }
     sum
+  }
+
+
+  override def adjacents(vertex: Int): immutable.Set[Int] = {
+    checkRange(vertex)
+    if (included(vertex)) {
+      matrix(vertex).zipWithIndex.collect { case (boolean, index) if boolean => index }.toSet
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
+  }
+  /*
+    override def incidents[E[X] >: Edge[X]](vertex: Int): immutable.Set[E[Int]] = {
+      checkRange(vertex)
+      if (included(vertex)) {
+        var edgeSet = immutable.Set[E[Int]]()
+        matrix(vertex).zipWithIndex.foreach { case (boolean, index) if boolean => edgeSet += Edge(vertex, index) }
+        edgeSet
+      }
+      else {
+        throw GraphException(s"vertex $vertex not found.")
+      }
+    }*/
+
+  override def incidentsFrom[E[X] >: Edge[X]](vertex: Int): immutable.Set[E[Int]] = {
+    checkRange(vertex)
+    if (included(vertex)) {
+      var edgeSet = immutable.Set[E[Int]]()
+      matrix(vertex).zipWithIndex.foreach { case (boolean, index) if boolean => edgeSet += Edge(vertex, index); case _ => }
+      edgeSet
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
+  }
+
+  override def incidentsTo[E[X] >: Edge[X]](vertex: Int): immutable.Set[E[Int]] = {
+    checkRange(vertex)
+    if (included(vertex)) {
+      var edgeSet = immutable.Set[E[Int]]()
+      matrix(vertex).zipWithIndex.foreach { case (boolean, index) if boolean => edgeSet += Edge(index, vertex); case _ => }
+      edgeSet
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
+  }
+
+  override def degree(vertex: Int): Int = {
+    checkRange(vertex)
+    if (included(vertex)) {
+      matrix(vertex).count(vertex => vertex)
+    }
+    else {
+      throw GraphException(s"vertex $vertex not found.")
+    }
   }
 
 

@@ -8,16 +8,22 @@ object DirectedWeightedEdge {
     Some(directedWeightedEdge.source, directedWeightedEdge.destination, directedWeightedEdge.weight)
 }
 
+
 /**
- * Represents a directed weighted edge from a source vertex to a destination vertex with a weight.
+ * A class Representing a directed weighted edge.
  *
- * @param source      the source vertex
- * @param destination the destination vertex
- * @param weight      the weight of the edge
- * @tparam V the type of vertices in the edge
- * @tparam W the type of the weight of the edge
+ * @param _src the source vertex of the edge
+ * @param _dst the destination vertex of the edge
+ * @param _w   the weight value of the edge
+ * @tparam V the type of the vertices in the edge
+ * @tparam W the type of the weight in the weighted edge
  */
-class DirectedWeightedEdge[V, W](source: V, destination: V, val weight: W) extends DirectedEdge[V](source, destination) {
+class DirectedWeightedEdge[+V, +W](override protected val _src: V, override protected val _dst: V, protected val _w: W)
+  extends DirectedEdge[V](_src, _dst) with IsWeightedEdge[V, W] with IsDirectedWeightedEdge[V, W] {
+  override def source: V = _src
+
+  override def weight: W = _w
+
   override def equals(other: Any): Boolean = other match {
     case that: DirectedWeightedEdge[V, W] =>
       (that canEqual this) &&

@@ -20,13 +20,15 @@ object MapDirectedGraphTest extends App {
 
   println(g.vertices)
   println("graph order = " + g.order)
+  g.addEdge(1, 2)
   g.addEdge(DirectedEdge(1, 2))
+  g.addEdge(2, 1)
   g.addEdge(DirectedEdge(1, 3))
   g.addEdge(DirectedEdge(3, 2))
   g.addEdge(DirectedEdge(4, 1))
   g.addEdge(DirectedEdge(4, 5))
-  val directedEdge = g.addEdge(5, 4)
-  assert(g.containsEdge(directedEdge))
+  //val directedEdge = g.addEdge(5, 4)
+  //assert(g.containsEdge(5,4))
 
   println("successors of 1 = " + g.successors(1))
   println("successors of 4 = " + g.successors(4))
@@ -42,10 +44,15 @@ object MapDirectedGraphTest extends App {
   println("outdegree of 1 = " + g.outdegree(1))
 
   g.deleteEdge(DirectedEdge(3, 2))
+  g.deleteEdge(1, 2)
   assert(!g.containsEdge(DirectedEdge(3, 2)))
   assert(g.containsEdge(DirectedEdge(4, 5)))
+  assert(g.containsEdge(2, 1))
   println(g.edges)
   println(g.size)
+
+  println(g.incidentsFrom(4))
+  println(g.incidentsTo(3))
 
 
 }

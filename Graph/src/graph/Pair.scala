@@ -1,13 +1,5 @@
 package graph
 
-/**
- * Class for implementing weighted graphs.
- *
- * @param vertex a vertex
- * @param weight a weight
- * @tparam V the type of the vertex
- * @tparam W the type of the weight
- */
 // class for implementing weighted graphs
 private[graph] case class Pair[V, W](vertex: V, weight: W) {
   // only successor component is used for determining if two Pairs are equal when

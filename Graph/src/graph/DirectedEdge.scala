@@ -6,14 +6,25 @@ object DirectedEdge {
   def unapply[V](directedEdge: DirectedEdge[V]): Option[(V, V)] = Some(directedEdge.source, directedEdge.destination)
 }
 
+
 /**
- * Represents a directed edge connecting two vertices.
+ * A class representing a directed edge.
  *
- * @param source      the source vertex
- * @param destination the destination vertex
- * @tparam V the type of vertices in the edge
+ * @param _src the source vertex of the edge
+ * @param _dst the destination vertex of the edge
+ * @tparam V the type of the vertices in the edge
  */
-class DirectedEdge[V](val source: V, val destination: V) {
+class DirectedEdge[+V](protected val _src: V, protected val _dst: V) extends IsEdge[V] with IsDirectedEdge[V] {
+
+  override def vertex1: V = _src
+
+  override def vertex2: V = _dst
+
+
+  override def source: V = _src
+
+  override def destination: V = _dst
+
   override def equals(other: Any): Boolean = other match {
     case that: DirectedEdge[V] =>
       (that canEqual this) &&

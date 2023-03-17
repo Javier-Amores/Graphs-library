@@ -8,20 +8,22 @@ import scala.collection.immutable
  * @tparam V the type of vertices in the graph
  * @tparam E the kind of edges in the graph
  */
-trait Graph[V, E[_]] {
+trait Graph[V, +E[_]] {
   /**
    * Adds a vertex to the graph.
    *
    * @param vertex the vertex to add
+   * @return true if the vertex was added to the graph, false otherwise.
    */
-  def addVertex(vertex: V): Unit
+  def addVertex(vertex: V): Boolean
 
   /**
    * Deletes a vertex from the graph.
    *
-   * @param vertex the vertex to delete
+   * @param vertex the vertex to delete.
+   * @return true if the vertex was deleted from the graph, false otherwise.
    */
-  def deleteVertex(vertex: V): Unit
+  def deleteVertex(vertex: V): Boolean
 
   /**
    * Checks if the graph contains a vertex.
@@ -46,6 +48,39 @@ trait Graph[V, E[_]] {
   def order: Int
 
   /**
+   * Returns an immutable set of edges in the graph.
+   *
+   * @tparam Edge the type of edges in the graph
+   * @return an immutable set of edges
+   */
+  def edges[Edge[X] >: E[X]]: immutable.Set[Edge[V]]
+
+  /**
+   * Returns the size of the graph (i.e., the number of edges in the graph)
+   *
+   * @return the size of the graph
+   */
+  def size: Int
+
+  /**
+   * Deletes the edge between two vertices.
+   *
+   * @param vertex1 the first vertex
+   * @param vertex2 the second vertex
+   * @return true if the edge was successfully deleted, false otherwise.
+   */
+  def deleteEdge(vertex1: V, vertex2: V): Boolean
+
+  /**
+   * Checks if the graph contains an edge.
+   *
+   * @param vertex1 the first vertex
+   * @param vertex2 the second vertex
+   * @return true if the graph contains the edge, false otherwise
+   */
+  def containsEdge(vertex1: V, vertex2: V): Boolean
+
+  /**
    * Returns the set of vertices that are successors of a given vertex.
    *
    * @param vertex he vertex whose successors to return
@@ -54,55 +89,30 @@ trait Graph[V, E[_]] {
   def successors(vertex: V): immutable.Set[V]
 
   /**
-   * Returns the degree of a given vertex (i.e., the number of edges incident to the vertex).
+   * Returns a set of the predecessors of a given vertex.
    *
-   * @param vertex the vertex whose degree to return
-   * @return the degree of the given vertex
+   * @param vertex the vertex whose predecessors to return
+   * @return a set of the predecessors of the vertex
    */
-  def degree(vertex: V): Int
+  def predecessors(vertex: V): immutable.Set[V]
 
   /**
-   * Adds an edge between two vertices to the graph as a side effect and returns the new edge.
+   * Returns an immutable set of edges where the specified vertex is the first vertex.
    *
-   * @param vertex1 the first vertex of the edge
-   * @param vertex2 the second vertex of the edge
-   * @return the edge that was added
+   * @param vertex the vertex to search for
+   * @tparam Edge the type of edges in the graph
+   * @return an immutable set of edges where the specified vertex is the first vertex
    */
-  def addEdge(vertex1: V, vertex2: V): E[V]
+  // edges where vertex is first vertex
+  def incidentsFrom[Edge[X] >: E[X]](vertex: V): immutable.Set[Edge[V]]
 
   /**
-   * Adds an edge to the graph.
+   * Returns an immutable set of edges where the specified vertex is the second vertex.
    *
-   * @param edge the edge to add
+   * @param vertex the vertex to search for
+   * @tparam Edge the type of edges in the graph
+   * @return an immutable set of edges where the specified vertex is the second vertex
    */
-  def addEdge(edge: E[V]): Unit
-
-  /**
-   * Deletes an edge from the graph.
-   *
-   * @param edge the edge to delete
-   */
-  def deleteEdge(edge: E[V]): Unit
-
-  /**
-   * Checks if the graph contains an edge.
-   *
-   * @param edge the edge to check
-   * @return true if the graph contains the edge, false otherwise
-   */
-  def containsEdge(edge: E[V]): Boolean
-
-  /**
-   * Returns the set of edges in the graph.
-   *
-   * @return the set of edges in the graph
-   */
-  def edges: immutable.Set[E[V]]
-
-  /**
-   * Returns the size of the graph (i.e., the number of edges in the graph)
-   *
-   * @return the size of the graph
-   */
-  def size: Int
+  // edges where vertex is second vertex
+  def incidentsTo[Edge[X] >: E[X]](vertex: V): immutable.Set[Edge[V]]
 }

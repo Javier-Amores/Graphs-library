@@ -1,35 +1,39 @@
 package graph
 
-import scala.collection.immutable
 
 /**
- * A trait representing a directed graph.
+ * trait representing a directed graph, with or without weighted edges.
  *
  * @tparam V the type of vertices in the graph
- * @tparam E the kind of edges in the graph
  */
-trait DirectedGraph[V, E[_]] extends Graph[V, E] {
-  /**
-   * Returns a set of the predecessors of a given vertex.
-   *
-   * @param vertex the vertex whose predecessors to return
-   * @return a set of the predecessors of the vertex
-   */
-  def predecessors(vertex: V): immutable.Set[V]
+// any directed graph, weighted or not
+trait DirectedGraph[V] extends Graph[V, DirectedEdge] {
 
   /**
-   * Returns the indegree of a given vertex.
+   * Returns the indegree of the specified vertex.
    *
-   * @param vertex the vertex whose indegree to return
-   * @return the indegree of the vertex
+   * @param destination the vertex to search for
+   * @return the indegree of the specified vertex
    */
-  def indegree(vertex: V): Int
+  def indegree(destination: V): Int
+
 
   /**
-   * Returns the outdegree of a given vertex.
+   * Returns the outdegree of the specified vertex.
    *
-   * @param vertex the vertex whose outdegree to return
-   * @return the outdegree of the vertex
+   * @param source the vertex to search for
+   * @return the outdegree of the specified vertex
    */
-  def outdegree(vertex: V): Int
+  def outdegree(source: V): Int
+
+  /**
+   * Returns the total degree of the specified vertex, which is the sum of its indegree and outdegree.
+   *
+   * @param vertex the vertex to search for
+   * @return the total degree of the specified vertex
+   */
+  def degree(vertex: V): Int =
+    indegree(vertex) + outdegree(vertex)
+
+  // def adjacents(vertex:V): immutable.Set[V] = successors ++ predecessors ??
 }
