@@ -76,14 +76,8 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedUnweightedGraph[Int]
   }
 
   override def addEdge(directedEdge: DirectedEdge[Int]): Boolean = {
-    checkRange(directedEdge.source)
-    checkRange(directedEdge.destination)
-    if (directedEdge.source == directedEdge.destination || containsEdge(directedEdge)) {
-      false
-    } else {
-      matrix(directedEdge.source)(directedEdge.destination) = true
-      true
-    }
+    val DirectedEdge(source, destination) = directedEdge
+    addEdge(source, destination)
   }
 
 
@@ -94,9 +88,8 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedUnweightedGraph[Int]
   }
 
   override def containsEdge(directedEdge: DirectedEdge[Int]): Boolean = {
-    checkRange(directedEdge.source)
-    checkRange(directedEdge.destination)
-    matrix(directedEdge.source)(directedEdge.destination)
+    val DirectedEdge(source, destination) = directedEdge
+    containsEdge(source, destination)
   }
 
   override def deleteEdge(source: Int, destination: Int): Boolean = {
@@ -111,14 +104,8 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedUnweightedGraph[Int]
   }
 
   override def deleteEdge(directedEdge: DirectedEdge[Int]): Boolean = {
-    checkRange(directedEdge.source)
-    checkRange(directedEdge.destination)
-    if (containsEdge(directedEdge)) {
-      matrix(directedEdge.source)(directedEdge.destination) = false
-      true
-    } else {
-      false
-    }
+    val DirectedEdge(source, destination) = directedEdge
+    deleteEdge(source, destination)
   }
 
   override def edges[Edge[X] >: DirectedEdge[X]]: immutable.Set[Edge[Int]] = {

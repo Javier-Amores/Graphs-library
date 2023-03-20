@@ -49,28 +49,16 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
       return false
     }
     (succs.get(vertex1), succs.get(vertex2)) match {
-      case (None, _) => false
-      case (_, None) => false
       case (Some(set1), Some(set2)) => set1 += vertex2
         set2 += vertex1
         true
+      case _ => false
     }
   }
 
   override def addEdge(edge: Edge[V]): Boolean = {
-    if (containsEdge(edge)) {
-      return false
-    }
-    if (edge.vertex1 == edge.vertex2) {
-      return false
-    }
-    (succs.get(edge.vertex1), succs.get(edge.vertex2)) match {
-      case (None, _) => false
-      case (_, None) => false
-      case (Some(set1), Some(set2)) => set1 += edge.vertex2
-        set2 += edge.vertex1
-        true
-    }
+    val Edge(vertex1, vertex2) = edge
+    addEdge(vertex1, vertex2)
   }
 
   override def containsEdge(vertex1: V, vertex2: V): Boolean = {
@@ -100,15 +88,8 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
   }
 
   override def deleteEdge(edge: Edge[V]): Boolean = {
-    if (!containsEdge(edge)) {
-      return false
-    }
-    (succs.get(edge.vertex1), succs.get(edge.vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 -= edge.vertex2
-        set2 -= edge.vertex1
-        true
-      case _ => false
-    }
+    val Edge(vertex1, vertex2) = edge
+    deleteEdge(vertex1, vertex2)
   }
 
   override def edges[E[X] >: Edge[X]]: immutable.Set[E[V]] = {
@@ -156,7 +137,9 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
   override def incidentsFrom[E[X] >: Edge[X]](vertex: V): immutable.Set[E[V]] = {
     succs.get(vertex) match {
       case None => throw GraphException(s"Vertex $vertex not found.")
-      case Some(set) => immutable.Set[E[V]]() ++ set.map(adjacentVertex => Edge(vertex, adjacentVertex).asInstanceOf[E[V]])
+      case Some(set) => var edgeSet = immutable.Set[E[V]]()
+        set.foreach(adjacentVertex => edgeSet += Edge(vertex, adjacentVertex))
+        edgeSet
     }
   }
 
@@ -164,7 +147,9 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
   override def incidentsTo[E[X] >: Edge[X]](vertex: V): immutable.Set[E[V]] = {
     succs.get(vertex) match {
       case None => throw GraphException(s"Vertex $vertex not found.")
-      case Some(set) => immutable.Set.empty ++ set.map(adjacentVertex => Edge(adjacentVertex, vertex).asInstanceOf[E[V]])
+      case Some(set) => var edgeSet = immutable.Set[E[V]]()
+        set.foreach(adjacentVertex => edgeSet += Edge(adjacentVertex, vertex))
+        edgeSet
     }
   }
 

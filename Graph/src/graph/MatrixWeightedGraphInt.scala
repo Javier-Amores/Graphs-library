@@ -82,18 +82,13 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends UndirectedWeigh
   }
 
   override def addEdge(weightedEdge: WeightedEdge[Int, W]): Boolean = {
-    checkRange(weightedEdge.vertex1)
-    checkRange(weightedEdge.vertex2)
-    if (weightedEdge.vertex1 == weightedEdge.vertex2 || containsEdge(weightedEdge.vertex1, weightedEdge.vertex2)) {
-      false
-    } else {
-      matrix(weightedEdge.vertex1)(weightedEdge.vertex2) = Some(weightedEdge.weight)
-      matrix(weightedEdge.vertex2)(weightedEdge.vertex1) = Some(weightedEdge.weight)
-      true
-    }
+    val WeightedEdge(vertex1, vertex2, weight) = weightedEdge
+    addEdge(vertex1, vertex2, weight)
   }
 
   override def containsEdge(vertex1: Int, vertex2: Int): Boolean = {
+    checkRange(vertex1)
+    checkRange(vertex2)
     matrix(vertex1)(vertex2) match {
       case Some(_) => true
       case None => false
@@ -104,18 +99,14 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends UndirectedWeigh
     checkRange(vertex1)
     checkRange(vertex2)
     matrix(vertex1)(vertex2) match {
-      case Some(weight2) if weight == weight2 => true
+      case Some(otherWeight) if weight == otherWeight => true
       case _ => false
     }
   }
 
   override def containsEdge(weightedEdge: WeightedEdge[Int, W]): Boolean = {
-    checkRange(weightedEdge.vertex1)
-    checkRange(weightedEdge.vertex2)
-    matrix(weightedEdge.vertex1)(weightedEdge.vertex2) match {
-      case Some(weight) if weight == weightedEdge.weight => true
-      case _ => false
-    }
+    val WeightedEdge(vertex1, vertex2, weight) = weightedEdge
+    containsEdge(vertex1, vertex2, weight)
   }
 
   override def deleteEdge(vertex1: Int, vertex2: Int): Boolean = {
@@ -147,17 +138,8 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends UndirectedWeigh
   }
 
   override def deleteEdge(weightedEdge: WeightedEdge[Int, W]): Boolean = {
-    checkRange(weightedEdge.vertex1)
-    checkRange(weightedEdge.vertex2)
-    if (containsEdge(weightedEdge)) {
-      matrix(weightedEdge.vertex1)(weightedEdge.vertex2) = None
-      matrix(weightedEdge.vertex2)(weightedEdge.vertex1) = None
-      true
-
-    } else {
-      false
-
-    }
+    val WeightedEdge(vertex1, vertex2, weight) = weightedEdge
+    deleteEdge(vertex1, vertex2, weight)
   }
 
   override def edges[Edge[X] >: WeightedEdge[X, W]]: immutable.Set[Edge[Int]] = {

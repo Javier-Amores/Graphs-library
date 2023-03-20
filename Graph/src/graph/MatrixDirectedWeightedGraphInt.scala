@@ -83,17 +83,13 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
   }
 
   override def addEdge(directedWeightedEdge: DirectedWeightedEdge[Int, W]): Boolean = {
-    checkRange(directedWeightedEdge.source)
-    checkRange(directedWeightedEdge.destination)
-    if (directedWeightedEdge.source == directedWeightedEdge.destination || containsEdge(directedWeightedEdge.source, directedWeightedEdge.destination)) {
-      false
-    } else {
-      matrix(directedWeightedEdge.source)(directedWeightedEdge.destination) = Some(directedWeightedEdge.weight)
-      true
-    }
+    val DirectedWeightedEdge(source, destination, weight) = directedWeightedEdge
+    addEdge(source, destination, weight)
   }
 
   override def containsEdge(source: Int, destination: Int): Boolean = {
+    checkRange(source)
+    checkRange(destination)
     matrix(source)(destination) match {
       case Some(_) => true
       case None => false
@@ -104,18 +100,14 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
     checkRange(source)
     checkRange(destination)
     matrix(source)(destination) match {
-      case Some(weight2) if weight == weight2 => true
+      case Some(otherWeight) if weight == otherWeight => true
       case _ => false
     }
   }
 
   override def containsEdge(directedWeightedEdge: DirectedWeightedEdge[Int, W]): Boolean = {
-    checkRange(directedWeightedEdge.source)
-    checkRange(directedWeightedEdge.destination)
-    matrix(directedWeightedEdge.source)(directedWeightedEdge.destination) match {
-      case Some(weight) if weight == directedWeightedEdge.weight => true
-      case _ => false
-    }
+    val DirectedWeightedEdge(source, destination, weight) = directedWeightedEdge
+    containsEdge(source, destination, weight)
   }
 
   override def deleteEdge(source: Int, destination: Int): Boolean = {
@@ -141,14 +133,8 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
   }
 
   override def deleteEdge(directedWeightedEdge: DirectedWeightedEdge[Int, W]): Boolean = {
-    checkRange(directedWeightedEdge.source)
-    checkRange(directedWeightedEdge.destination)
-    if (containsEdge(directedWeightedEdge)) {
-      matrix(directedWeightedEdge.source)(directedWeightedEdge.destination) = None
-      true
-    } else {
-      false
-    }
+    val DirectedWeightedEdge(source, destination, weight) = directedWeightedEdge
+    deleteEdge(source, destination, weight)
   }
 
   override def edges[Edge[X] >: DirectedWeightedEdge[X, W]]: immutable.Set[Edge[Int]] = {

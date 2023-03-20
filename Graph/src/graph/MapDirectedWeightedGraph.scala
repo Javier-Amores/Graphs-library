@@ -53,7 +53,6 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
       return false
     }
     succsAndWeights.get(source) match {
-      case None => false
       case Some(set) if containsVertex(destination) => set += Pair(destination, weight)
         true
       case _ => false
@@ -61,19 +60,8 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
   }
 
   override def addEdge(directedWeightedEdge: DirectedWeightedEdge[V, W]): Boolean = {
-    if (containsEdge(directedWeightedEdge.source, directedWeightedEdge.destination)) {
-      return false
-    }
-    if (directedWeightedEdge.source == directedWeightedEdge.destination) {
-      return false
-    }
-
-    succsAndWeights.get(directedWeightedEdge.source) match {
-      case None => false
-      case Some(set) if containsVertex(directedWeightedEdge.destination) => set += Pair(directedWeightedEdge.destination, directedWeightedEdge.weight)
-        true
-      case _ => false
-    }
+    val DirectedWeightedEdge(source, destination, weight) = directedWeightedEdge
+    addEdge(source, destination, weight)
   }
 
   override def containsEdge(source: V, destination: V): Boolean = {
@@ -121,15 +109,8 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
   }
 
   override def deleteEdge(directedWeightedEdge: DirectedWeightedEdge[V, W]): Boolean = {
-    if (!containsEdge(directedWeightedEdge)) {
-      return false
-    }
-
-    succsAndWeights.get(directedWeightedEdge.source) match {
-      case Some(set) =>
-        set -= Pair(directedWeightedEdge.destination, directedWeightedEdge.weight)
-        true
-    }
+    val DirectedWeightedEdge(source, destination, weight) = directedWeightedEdge
+    deleteEdge(source, destination, weight)
   }
 
   override def edges[Edge[X] >: DirectedWeightedEdge[X, W]]: immutable.Set[Edge[V]] = {

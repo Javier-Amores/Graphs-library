@@ -72,15 +72,8 @@ class MatrixGraphInt(maxOrder: Int) extends UndirectedUnweightedGraph[Int] {
   }
 
   override def addEdge(edge: Edge[Int]): Boolean = {
-    checkRange(edge.vertex1)
-    checkRange(edge.vertex2)
-    if (edge.vertex1 == edge.vertex2 || containsEdge(edge)) {
-      false
-    } else {
-      matrix(edge.vertex1)(edge.vertex2) = true
-      matrix(edge.vertex2)(edge.vertex1) = true
-      true
-    }
+    val Edge(vertex1, vertex2) = edge
+    addEdge(vertex1, vertex2)
   }
 
   override def containsEdge(vertex1: Int, vertex2: Int): Boolean = {
@@ -90,9 +83,8 @@ class MatrixGraphInt(maxOrder: Int) extends UndirectedUnweightedGraph[Int] {
   }
 
   override def containsEdge(edge: Edge[Int]): Boolean = {
-    checkRange(edge.vertex1)
-    checkRange(edge.vertex2)
-    matrix(edge.vertex1)(edge.vertex2)
+    val Edge(vertex1, vertex2) = edge
+    containsEdge(vertex1, vertex2)
   }
 
   override def deleteEdge(vertex1: Int, vertex2: Int): Boolean = {
@@ -108,15 +100,8 @@ class MatrixGraphInt(maxOrder: Int) extends UndirectedUnweightedGraph[Int] {
   }
 
   override def deleteEdge(edge: Edge[Int]): Boolean = {
-    checkRange(edge.vertex1)
-    checkRange(edge.vertex2)
-    if (containsEdge(edge)) {
-      matrix(edge.vertex1)(edge.vertex2) = false
-      matrix(edge.vertex2)(edge.vertex1) = false
-      true
-    } else {
-      false
-    }
+    val Edge(vertex1, vertex2) = edge
+    deleteEdge(vertex1, vertex2)
   }
 
   override def edges[E[X] >: Edge[X]]: immutable.Set[E[Int]] = {

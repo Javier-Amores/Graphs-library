@@ -54,7 +54,6 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
       return false
     }
     succs.get(source) match {
-      case None => false
       case Some(set) if containsVertex(destination) => set += destination
         true
       case _ => false
@@ -62,19 +61,8 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
   }
 
   override def addEdge(directedEdge: DirectedEdge[V]): Boolean = {
-    if (containsEdge(directedEdge)) {
-      return false
-    }
-    if (directedEdge.source == directedEdge.destination) {
-      return false
-    }
-
-    succs.get(directedEdge.source) match {
-      case None => false
-      case Some(set) if containsVertex(directedEdge.destination) => set += directedEdge.destination
-        true
-      case _ => false
-    }
+    val DirectedEdge(source, destination) = directedEdge
+    addEdge(source, destination)
   }
 
 
@@ -97,7 +85,6 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
       return false
     }
     succs.get(source) match {
-      case None => false
       case Some(set) if containsVertex(destination) => set -= destination
         true
       case _ => false
@@ -105,13 +92,8 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
   }
 
   override def deleteEdge(directedEdge: DirectedEdge[V]): Boolean = {
-    if (!containsEdge(directedEdge)) {
-      return false
-    }
-    succs.get(directedEdge.source) match {
-      case Some(set) => set -= directedEdge.destination
-        true
-    }
+    val DirectedEdge(source, destination) = directedEdge
+    deleteEdge(source, destination)
   }
 
   override def edges[Edge[X] >: DirectedEdge[X]]: immutable.Set[Edge[V]] = {
@@ -155,7 +137,7 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
     succs.get(source) match {
       case None => throw GraphException(s"Vertex $source not found.")
       case Some(successorSet) => var edgeSet = immutable.Set[Edge[V]]()
-        successorSet.foreach(succesor => edgeSet += DirectedEdge(source, succesor))
+        successorSet.foreach(successor => edgeSet += DirectedEdge(source, successor))
         edgeSet
     }
   }

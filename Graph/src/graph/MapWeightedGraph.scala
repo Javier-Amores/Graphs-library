@@ -54,11 +54,10 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
       return false
     }
     (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
-      case (None, _) => false
-      case (_, None) => false
       case (Some(set1), Some(set2)) => set1 += Pair(vertex2, weight)
         set2 += Pair(vertex1, weight)
         true
+      case _ => false
     }
   }
 
@@ -70,11 +69,10 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
       return false
     }
     (succsAndWeights.get(weightedEdge.vertex1), succsAndWeights.get(weightedEdge.vertex2)) match {
-      case (None, _) => false
-      case (_, None) => false
       case (Some(set1), Some(set2)) => set1 += Pair(weightedEdge.vertex2, weightedEdge.weight)
         set2 += Pair(weightedEdge.vertex1, weightedEdge.weight)
         true
+      case _ => false
     }
   }
 
@@ -124,15 +122,8 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
   }
 
   override def deleteEdge(weightedEdge: WeightedEdge[V, W]): Boolean = {
-    if (!containsEdge(weightedEdge)) {
-      return false
-    }
-    (succsAndWeights.get(weightedEdge.vertex1), succsAndWeights.get(weightedEdge.vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 -= Pair(weightedEdge.vertex2, weightedEdge.weight)
-        set2 -= Pair(weightedEdge.vertex1, weightedEdge.weight)
-        true
-      case _ => false
-    }
+    val WeightedEdge(vertex1, vertex2, weight) = weightedEdge
+    deleteEdge(vertex1, vertex2, weight)
   }
 
   override def edges[Edge[X] >: WeightedEdge[X, W]]: immutable.Set[Edge[V]] = {
@@ -197,7 +188,9 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
   override def incidentsTo[Edge[X] >: WeightedEdge[X, W]](vertex: V): immutable.Set[Edge[V]] = {
     succsAndWeights.get(vertex) match {
       case None => throw GraphException(s"Vertex $vertex not found.")
-      case Some(set) => immutable.Set.empty ++ set.map(pair => WeightedEdge(pair.vertex, vertex, pair.weight).asInstanceOf[Edge[V]])
+      case Some(successorSet) => var edgeSet = immutable.Set[Edge[V]]()
+        successorSet.foreach(successorPair => edgeSet += WeightedEdge(successorPair.vertex, vertex, successorPair.weight))
+        edgeSet
     }
   }
 }
