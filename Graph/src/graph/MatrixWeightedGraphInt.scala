@@ -72,7 +72,10 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends UndirectedWeigh
   override def addEdge(vertex1: Int, vertex2: Int, weight: W): Boolean = {
     checkRange(vertex1)
     checkRange(vertex2)
-    if (vertex1 == vertex2 || containsEdge(vertex1, vertex2)) {
+    if (vertex1 == vertex2) {
+      throw GraphException("Self-loops are not allowed in simple graphs.")
+    }
+    if (containsEdge(vertex1, vertex2)) {
       false
     } else {
       matrix(vertex1)(vertex2) = Some(weight)
@@ -191,19 +194,7 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends UndirectedWeigh
     }
   }
 
-  /*
-    override def incidents[Edge[X] >: WeightedEdge[X, W]](vertex: Int): immutable.Set[Edge[Int]] = {
-      checkRange(vertex)
-      if (included(vertex)) {
-        var edgeSet = immutable.Set[Edge[Int]]()
-        matrix(vertex).zipWithIndex.foreach { case (Some(weight), index) => edgeSet += WeightedEdge(vertex, index, weight) }
-        edgeSet
-      }
-      else {
-        throw GraphException(s"vertex $vertex not found.")
-      }
-    }
-  */
+
   override def degree(vertex: Int): Int = {
     checkRange(vertex)
     if (included(vertex)) {

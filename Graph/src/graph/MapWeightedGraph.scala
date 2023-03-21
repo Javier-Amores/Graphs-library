@@ -48,32 +48,23 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
 
   override def addEdge(vertex1: V, vertex2: V, weight: W): Boolean = {
     if (vertex1 == vertex2) {
-      return false
+      throw GraphException("Self-loops are not allowed in simple graphs.")
     }
     if (containsEdge(vertex1, vertex2)) {
-      return false
-    }
-    (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 += Pair(vertex2, weight)
-        set2 += Pair(vertex1, weight)
-        true
-      case _ => false
+      false
+    } else {
+      (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
+        case (Some(set1), Some(set2)) => set1 += Pair(vertex2, weight)
+          set2 += Pair(vertex1, weight)
+          true
+        case _ => false
+      }
     }
   }
 
   override def addEdge(weightedEdge: WeightedEdge[V, W]): Boolean = {
-    if (containsEdge(weightedEdge.vertex1, weightedEdge.vertex2)) {
-      return false
-    }
-    if (weightedEdge.vertex1 == weightedEdge.vertex2) {
-      return false
-    }
-    (succsAndWeights.get(weightedEdge.vertex1), succsAndWeights.get(weightedEdge.vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 += Pair(weightedEdge.vertex2, weightedEdge.weight)
-        set2 += Pair(weightedEdge.vertex1, weightedEdge.weight)
-        true
-      case _ => false
-    }
+    val WeightedEdge(vertex1, vertex2, weight) = weightedEdge
+    addEdge(vertex1, vertex2, weight)
   }
 
   override def containsEdge(vertex1: V, vertex2: V): Boolean = {
@@ -98,26 +89,28 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
   }
 
   override def deleteEdge(vertex1: V, vertex2: V): Boolean = {
-    if (!containsEdge(vertex1, vertex2)) {
-      return false
-    }
-    (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
-      case (Some(set1), Some(set2)) => set1.filterInPlace(pair => pair.vertex != vertex2)
-        set2.filterInPlace(pair => pair.vertex != vertex1)
-        true
-      case _ => false
+    if (containsEdge(vertex1, vertex2)) {
+      (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
+        case (Some(set1), Some(set2)) => set1.filterInPlace(pair => pair.vertex != vertex2)
+          set2.filterInPlace(pair => pair.vertex != vertex1)
+          true
+        case _ => false
+      }
+    } else {
+      false
     }
   }
 
   override def deleteEdge(vertex1: V, vertex2: V, weight: W): Boolean = {
-    if (!containsEdge(vertex1, vertex2, weight)) {
-      return false
-    }
-    (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 -= Pair(vertex2, weight)
-        set2 -= Pair(vertex1, weight)
-        true
-      case _ => false
+    if (containsEdge(vertex1, vertex2, weight)) {
+      (succsAndWeights.get(vertex1), succsAndWeights.get(vertex2)) match {
+        case (Some(set1), Some(set2)) => set1 -= Pair(vertex2, weight)
+          set2 -= Pair(vertex1, weight)
+          true
+        case _ => false
+      }
+    } else {
+      false
     }
   }
 
@@ -161,13 +154,6 @@ class MapWeightedGraph[V, W] extends UndirectedWeightedGraph[V, W] {
       case Some(set) => immutable.Set.empty ++ set.map(pair => pair.vertex)
     }
   }
-  /*
-    override def incidents[Edge[X] >: WeightedEdge[X, W]](vertex: V): immutable.Set[Edge[V]] = {
-      succsAndWeights.get(vertex) match {
-        case None => throw GraphException(s"Vertex $vertex not found.")
-        case Some(set) => immutable.Set.empty ++ set.map(pair => WeightedEdge(vertex, pair.vertex, pair.weight).asInstanceOf[Edge[V]])
-      }
-    }*/
 
   override def degree(vertex: V): Int = {
     succsAndWeights.get(vertex) match {

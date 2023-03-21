@@ -62,7 +62,10 @@ class MatrixGraphInt(maxOrder: Int) extends UndirectedUnweightedGraph[Int] {
   override def addEdge(vertex1: Int, vertex2: Int): Boolean = {
     checkRange(vertex1)
     checkRange(vertex2)
-    if (vertex1 == vertex2 || containsEdge(vertex1, vertex2)) {
+    if (vertex1 == vertex2) {
+      throw GraphException("Self-loops are not allowed in simple graphs.")
+    }
+    if (containsEdge(vertex1, vertex2)) {
       false
     } else {
       matrix(vertex1)(vertex2) = true
@@ -141,18 +144,6 @@ class MatrixGraphInt(maxOrder: Int) extends UndirectedUnweightedGraph[Int] {
       throw GraphException(s"vertex $vertex not found.")
     }
   }
-  /*
-    override def incidents[E[X] >: Edge[X]](vertex: Int): immutable.Set[E[Int]] = {
-      checkRange(vertex)
-      if (included(vertex)) {
-        var edgeSet = immutable.Set[E[Int]]()
-        matrix(vertex).zipWithIndex.foreach { case (boolean, index) if boolean => edgeSet += Edge(vertex, index) }
-        edgeSet
-      }
-      else {
-        throw GraphException(s"vertex $vertex not found.")
-      }
-    }*/
 
   override def incidentsFrom[E[X] >: Edge[X]](vertex: Int): immutable.Set[E[Int]] = {
     checkRange(vertex)

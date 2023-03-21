@@ -43,16 +43,17 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
 
   override def addEdge(vertex1: V, vertex2: V): Boolean = {
     if (vertex1 == vertex2) {
-      return false
+      throw GraphException("Self-loops are not allowed in simple graphs.")
     }
     if (containsEdge(vertex1, vertex2)) {
-      return false
-    }
-    (succs.get(vertex1), succs.get(vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 += vertex2
-        set2 += vertex1
-        true
-      case _ => false
+      false
+    } else {
+      (succs.get(vertex1), succs.get(vertex2)) match {
+        case (Some(set1), Some(set2)) => set1 += vertex2
+          set2 += vertex1
+          true
+        case _ => false
+      }
     }
   }
 
@@ -76,15 +77,17 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
   }
 
   override def deleteEdge(vertex1: V, vertex2: V): Boolean = {
-    if (!containsEdge(vertex1, vertex2)) {
-      return false
+    if (containsEdge(vertex1, vertex2)) {
+      (succs.get(vertex1), succs.get(vertex2)) match {
+        case (Some(set1), Some(set2)) => set1 -= vertex2
+          set2 -= vertex1
+          true
+        case _ => false
+      }
+    } else {
+      false
     }
-    (succs.get(vertex1), succs.get(vertex2)) match {
-      case (Some(set1), Some(set2)) => set1 -= vertex2
-        set2 -= vertex1
-        true
-      case _ => false
-    }
+
   }
 
   override def deleteEdge(edge: Edge[V]): Boolean = {
@@ -124,16 +127,6 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
     }
   }
 
-
-  /*
-  override def incidents[E[X] >: Edge[X]](vertex: V): immutable.Set[E[V]] = {
-    succs.get(vertex) match {
-      case None => throw GraphException(s"Vertex $vertex not found.")
-      case Some(set) => immutable.Set.empty ++ set.map(adjacentVertex => Edge(vertex, adjacentVertex))
-    }
-  }*/
-
-  //??
   override def incidentsFrom[E[X] >: Edge[X]](vertex: V): immutable.Set[E[V]] = {
     succs.get(vertex) match {
       case None => throw GraphException(s"Vertex $vertex not found.")
@@ -143,7 +136,7 @@ class MapGraph[V] extends UndirectedUnweightedGraph[V] {
     }
   }
 
-  //??
+
   override def incidentsTo[E[X] >: Edge[X]](vertex: V): immutable.Set[E[V]] = {
     succs.get(vertex) match {
       case None => throw GraphException(s"Vertex $vertex not found.")

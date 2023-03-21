@@ -47,15 +47,16 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
 
   override def addEdge(source: V, destination: V, weight: W): Boolean = {
     if (source == destination) {
-      return false
+      throw GraphException("Self-loops are not allowed in simple graphs.")
     }
     if (containsEdge(source, destination)) {
-      return false
-    }
-    succsAndWeights.get(source) match {
-      case Some(set) if containsVertex(destination) => set += Pair(destination, weight)
-        true
-      case _ => false
+      false
+    } else {
+      succsAndWeights.get(source) match {
+        case Some(set) if containsVertex(destination) => set += Pair(destination, weight)
+          true
+        case _ => false
+      }
     }
   }
 
@@ -86,25 +87,26 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
   }
 
   override def deleteEdge(source: V, destination: V): Boolean = {
-    if (!containsEdge(source, destination)) {
-      return false
-    }
-    succsAndWeights.get(source) match {
-      case Some(set) =>
-        set filterInPlace (pair => pair.vertex != destination)
-        true
+    if (containsEdge(source, destination)) {
+      succsAndWeights.get(source) match {
+        case Some(set) =>
+          set filterInPlace (pair => pair.vertex != destination)
+          true
+      }
+    } else {
+      false
     }
   }
 
   override def deleteEdge(source: V, destination: V, weight: W): Boolean = {
-    if (!containsEdge(source, destination, weight)) {
-      return false
-    }
-
-    succsAndWeights.get(source) match {
-      case Some(set) =>
-        set -= Pair(destination, weight)
-        true
+    if (containsEdge(source, destination, weight)) {
+      succsAndWeights.get(source) match {
+        case Some(set) =>
+          set -= Pair(destination, weight)
+          true
+      }
+    } else {
+      false
     }
   }
 
@@ -160,8 +162,6 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
     throw GraphException(s"Vertex $destination not found.")
   }
 
-  // succsAndWeights ?? predecesorAndWeights ??
-
   override def incidentsFrom[Edge[X] >: DirectedWeightedEdge[X, W]](source: V): immutable.Set[Edge[V]] = {
     succsAndWeights.get(source) match {
       case None => throw GraphException(s"Vertex $source not found.")
@@ -174,9 +174,7 @@ class MapDirectedWeightedGraph[V, W] extends DirectedWeightedGraph[V, W] {
   override def incidentsTo[Edge[X] >: DirectedWeightedEdge[X, W]](destination: V): immutable.Set[Edge[V]] = if (containsVertex(destination)) {
     var edgeSet = immutable.Set[Edge[V]]()
     for ((predecessor, destinationSet) <- succsAndWeights) {
-      if (destinationSet.map(pair => pair.vertex).contains(destination)) {
-        edgeSet += DirectedWeightedEdge(predecessor, destination, weightOfEdge(predecessor, destination).get)
-      }
+      destinationSet.foreach { case Pair(otherDestination, weight) if otherDestination == destination => edgeSet += DirectedWeightedEdge(predecessor, destination, weight); case _ => }
     }
     edgeSet
   }

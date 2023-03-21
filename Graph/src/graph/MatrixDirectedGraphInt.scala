@@ -67,7 +67,10 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedUnweightedGraph[Int]
   override def addEdge(source: Int, destination: Int): Boolean = {
     checkRange(source)
     checkRange(destination)
-    if (source == destination || containsEdge(source, destination)) {
+    if (source == destination) {
+      throw GraphException("Self-loops are not allowed in simple graphs.")
+    }
+    if (containsEdge(source, destination)) {
       false
     } else {
       matrix(source)(destination) = true

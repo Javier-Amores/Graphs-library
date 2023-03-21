@@ -48,15 +48,16 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
 
   override def addEdge(source: V, destination: V): Boolean = {
     if (source == destination) {
-      return false
+      throw GraphException("Self-loops are not allowed in simple graphs.")
     }
     if (containsEdge(source, destination)) {
-      return false
-    }
-    succs.get(source) match {
-      case Some(set) if containsVertex(destination) => set += destination
-        true
-      case _ => false
+      false
+    } else {
+      succs.get(source) match {
+        case Some(set) if containsVertex(destination) => set += destination
+          true
+        case _ => false
+      }
     }
   }
 
@@ -81,13 +82,14 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
   }
 
   override def deleteEdge(source: V, destination: V): Boolean = {
-    if (!containsEdge(source, destination)) {
-      return false
-    }
-    succs.get(source) match {
-      case Some(set) if containsVertex(destination) => set -= destination
-        true
-      case _ => false
+    if (containsEdge(source, destination)) {
+      succs.get(source) match {
+        case Some(set) if containsVertex(destination) => set -= destination
+          true
+        case _ => false
+      }
+    } else {
+      false
     }
   }
 
