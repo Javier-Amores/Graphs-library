@@ -78,14 +78,20 @@ object TestGraphs extends App {
 
   // only weighted graphs
   def f3[V, W](g: WeightedGraph[V, W]): Unit = {
-    val _e = g.edges
-    val e: IsWeightedEdge[V, W] = _e.head
+    //val e: IsWeightedEdge[V, W] = g.edges.head //error: polymorphic expression cannot be instantiated to expected type
+    val e: IsWeightedEdge[V, W] = { //ok?
+      val p = g.edges.head
+      p
+    }
     println(e.weight)
     println(e.vertex1)
 
     val v = g.vertices.head
-    val _es = g.incidentsFrom(v)
-    val es: immutable.Set[IsWeightedEdge[V, W]] = _es
+    //val es: immutable.Set[IsWeightedEdge[V, W]] = g.incidentsFrom(v)
+    val es: immutable.Set[IsWeightedEdge[V, W]] = {
+      val p = g.incidentsFrom(v)
+      p
+    }
     println(es.head.weight)
   }
 
@@ -111,8 +117,12 @@ object TestGraphs extends App {
 
   // only directed weighted graphs
   def f5[V, W](g: DirectedWeightedGraph[V, W]): Unit = {
-    val _e = g.edges
-    val e: IsDirectedWeightedEdge[V, W] = _e.head
+
+    //val e: IsDirectedWeightedEdge[V, W] = g.edges.head //doesn't work
+    val e: IsDirectedWeightedEdge[V, W] = { //ok?
+      val p = g.edges.head
+      p
+    }
     println(e.weight)
     println(e.source)
     //println(e.getClass)
@@ -121,8 +131,11 @@ object TestGraphs extends App {
     // Set is not covariant !!!
     //val es: immutable.Set[IsDirectedWeightedEdge[V, W]] = g.incidentsFrom(v)
     val es: Iterable[IsDirectedWeightedEdge[V, W]] = g.incidentsFrom(v)
-    val _es2 = g.incidentsFrom(v)
-    val es2: Set[DirectedWeightedEdge[V, W]] = _es2
+    //val es2: Set[DirectedWeightedEdge[V, W]] = g.incidentsFrom(v) //inferred Set[DirectedEdge[V]] instead of Set[DirectedWeightedEdge[V,W]]
+    val es2: Set[DirectedWeightedEdge[V, W]] = { //ok?
+      val s = g.incidentsFrom(v)
+      s
+    }
     val e2: IsDirectedWeightedEdge[V, W] = g.incidentsFrom(v).head
     println(es.head.weight)
     println(es.head.source)
