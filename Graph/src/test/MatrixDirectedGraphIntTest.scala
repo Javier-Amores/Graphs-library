@@ -47,4 +47,5 @@ object MatrixDirectedGraphIntTest extends App {
   println(g.incidentsFrom(4))
   println(g.incidentsTo(2))
   println("size of g = " + g.size)
+
 }

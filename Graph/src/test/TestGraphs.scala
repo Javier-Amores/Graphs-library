@@ -87,7 +87,7 @@ object TestGraphs extends App {
     println(e.vertex1)
 
     val v = g.vertices.head
-    //val es: immutable.Set[IsWeightedEdge[V, W]] = g.incidentsFrom(v)
+    //val es: immutable.Set[IsWeightedEdge[V, W]] = g.incidentsFrom(v) //inferred Set[IsEdge[V]] instead of Set[IsWeightedEdge[V,W]]
     val es: immutable.Set[IsWeightedEdge[V, W]] = {
       val p = g.incidentsFrom(v)
       p
