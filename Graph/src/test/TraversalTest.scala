@@ -1,5 +1,5 @@
 import graph._
-import graph.traversal.{DepthFirstTraversal, BreadthFirstTraversal}
+import graph.traversal._
 
 object TraversalTest extends App {
   val g = MapGraph[String]()
@@ -27,6 +27,9 @@ object TraversalTest extends App {
 
   val t = new DepthFirstTraversal(g, "A")
   val b = new BreadthFirstTraversal(g, "A")
+
+  println(t.getSpanningTree())
+  println(b.getSpanningTree())
 
 
   println(t.isReachable("B"))
@@ -70,6 +73,47 @@ object TraversalTest extends App {
   println(dt.pathTo("I"))
   println(db.pathTo("F"))
 
+  println(Connected(g).isConnected)
+  g.deleteVertex("I")
+  println(Connected(g).isConnected)
 
+  g.addVertex("I")
+  val cc = ConnectedComponent(g)
+  println(cc.get("A"))
+  println(cc.get())
+  println(cc.getNumber)
+
+  val tc = Bipartite(g)
+  println(tc.isBipartite())
+
+  val bg = MatrixGraphInt(10)
+  bg.addVertex(1)
+  bg.addVertex(2)
+  bg.addVertex(3)
+  bg.addVertex(4)
+  bg.addVertex(5)
+  bg.addVertex(6)
+  bg.addVertex(7)
+  bg.addVertex(8)
+  bg.addVertex(9)
+
+  bg.addEdge(1,6)
+  bg.addEdge(1,9)
+  bg.addEdge(2,8)
+  bg.addEdge(3,6)
+  bg.addEdge(3,7)
+  bg.addEdge(4,8)
+  bg.addEdge(4,9)
+  bg.addEdge(5,9)
+
+  val twc = Bipartite(bg)
+  println(twc.isBipartite())
+
+  val notCycle = Cycle(bg)
+  println(notCycle.hasCycle)
+
+  bg.addEdge(6,7)
+  val cycle = Cycle(bg)
+  println(cycle.hasCycle)
 
 }

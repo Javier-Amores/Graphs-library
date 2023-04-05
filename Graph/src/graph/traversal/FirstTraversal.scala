@@ -37,6 +37,8 @@ abstract class FirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extend
 
 
   // implementación de los métodos de consulta que son iguales para ambas subclases
+  override def getSpanningTree(): mutable.Map[V, mutable.Set[V]] = spanningTree
+
   override def isReachable(vertex: V): Boolean = {
     spanningTree.find(x => x._2.contains(vertex)) match {
       case None => false
