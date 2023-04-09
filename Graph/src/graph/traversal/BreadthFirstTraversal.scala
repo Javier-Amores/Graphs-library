@@ -7,6 +7,7 @@ import scala.collection.mutable
 
 /**
  * Implements a breadth-first traversal of a graph, starting from a specified vertex.
+ *
  * @param graph       the graph to traverse
  * @param startVertex the vertex to start the traversal from
  * @tparam V the type of the vertices in the graph

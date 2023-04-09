@@ -7,7 +7,8 @@ import scala.collection.mutable
 
 /**
  * Provides a generic implementation for a first traversal algorithm over a graph, starting from a given vertex.
- * @param graph the graph to traverse
+ *
+ * @param graph       the graph to traverse
  * @param startVertex the vertex to start the traversal from
  * @tparam V the type of the vertices in the graph
  */
@@ -17,6 +18,7 @@ abstract class FirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extend
 
   /**
    * Traverses the graph starting from the specified start vertex, and returns the resulting spanning tree.
+   *
    * @return the resulting spanning tree
    */
   // Generic implementation of traversal
@@ -59,16 +61,16 @@ abstract class FirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extend
 
   override def pathTo(vertex: V): Option[List[V]] = {
     var path = List[V](vertex)
-    var currentVertex:V = vertex
-    spanningTree.find(x => x._2.contains(currentVertex)) match{
+    var currentVertex: V = vertex
+    spanningTree.find(x => x._2.contains(currentVertex)) match {
       case None => return None
-      case Some((key,_)) => path =  key +: path
-                            currentVertex = key
+      case Some((key, _)) => path = key +: path
+        currentVertex = key
     }
     while (currentVertex != startVertex) {
       spanningTree.find(x => x._2.contains(currentVertex)) match {
-        case Some((key, _)) => path =  key +: path
-                                currentVertex = key
+        case Some((key, _)) => path = key +: path
+          currentVertex = key
       }
     }
     Some(path)
