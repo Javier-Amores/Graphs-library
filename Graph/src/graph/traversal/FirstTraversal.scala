@@ -5,18 +5,28 @@ import graph._
 
 import scala.collection.mutable
 
+/**
+ * Provides a generic implementation for a first traversal algorithm over a graph, starting from a given vertex.
+ * @param graph the graph to traverse
+ * @param startVertex the vertex to start the traversal from
+ * @tparam V the type of the vertices in the graph
+ */
 abstract class FirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extends Traversal[V] {
   protected val spanningTree: mutable.Map[V, mutable.Set[V]]
-  protected val structure: Structure[IsEdge[V]]
+  protected val container: Container[IsEdge[V]]
 
-  // implementación genérica del recorrido
+  /**
+   * Traverses the graph starting from the specified start vertex, and returns the resulting spanning tree.
+   * @return the resulting spanning tree
+   */
+  // Generic implementation of traversal
   protected def traverse(): mutable.Map[V, mutable.Set[V]] = {
     if (graph.containsVertex(startVertex)) {
       val visited = mutable.Set[V]()
       val tree = mutable.Map[V, mutable.Set[V]]()
-      structure.add(Edge(startVertex, startVertex))
-      while (!structure.isEmpty) {
-        val currentEdge = structure.remove()
+      container.add(Edge(startVertex, startVertex))
+      while (!container.isEmpty) {
+        val currentEdge = container.remove()
         if (!visited.contains(currentEdge.vertex2)) {
           visited += currentEdge.vertex2
           tree.get(currentEdge.vertex1) match {
@@ -24,7 +34,7 @@ abstract class FirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extend
             case Some(set) => set += currentEdge.vertex2
           }
           val succs: IterableOnce[IsEdge[V]] = graph.incidentsFrom(currentEdge.vertex2).filterNot(edge => visited.contains(edge.vertex2))
-          structure.add(succs)
+          container.add(succs)
         }
       }
       tree
@@ -36,8 +46,8 @@ abstract class FirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extend
   }
 
 
-  // implementación de los métodos de consulta que son iguales para ambas subclases
-  override def getSpanningTree(): mutable.Map[V, mutable.Set[V]] = spanningTree
+  // Implementation of query methods that are the same for both subclasses.
+  override def getSpanningTree: mutable.Map[V, mutable.Set[V]] = spanningTree
 
   override def isReachable(vertex: V): Boolean = {
     spanningTree.find(x => x._2.contains(vertex)) match {

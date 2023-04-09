@@ -28,8 +28,8 @@ object TraversalTest extends App {
   val t = new DepthFirstTraversal(g, "A")
   val b = new BreadthFirstTraversal(g, "A")
 
-  println(t.getSpanningTree())
-  println(b.getSpanningTree())
+  println(t.getSpanningTree)
+  println(b.getSpanningTree)
 
 
   println(t.isReachable("B"))
@@ -84,7 +84,7 @@ object TraversalTest extends App {
   println(cc.getNumber)
 
   val tc = Bipartite(g)
-  println(tc.isBipartite())
+  println(tc.isBipartite)
 
   val bg = MatrixGraphInt(10)
   bg.addVertex(1)
@@ -107,7 +107,7 @@ object TraversalTest extends App {
   bg.addEdge(5,9)
 
   val twc = Bipartite(bg)
-  println(twc.isBipartite())
+  println(twc.isBipartite)
 
   val notCycle = Cycle(bg)
   println(notCycle.hasCycle)
