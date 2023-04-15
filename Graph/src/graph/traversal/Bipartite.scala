@@ -12,17 +12,18 @@ import scala.collection.mutable
  * @tparam V the type of the vertices in the graph
  */
 case class Bipartite[V](graph: UndirectedGraph[V]) {
-  private val vertices = graph.vertices
-  private var notVisited = vertices
+  private val vertices = graph.vertices.iterator
   private val color = mutable.Map[V, Boolean]()
-  vertices.foreach(vertex => color(vertex) = false)
   private var isTwoColorable: Boolean = true
 
-  for (vertex <- vertices) {
-    if (notVisited.contains(vertex)) {
-      dfs(vertex)
+  while (vertices.hasNext && isTwoColorable) {
+    val vertex = vertices.next
+    color.get(vertex) match {
+      case None => dfs(vertex)
+      case _ =>
     }
   }
+
 
   /**
    * Performs a depth-first search to check if the graph is bipartite.
@@ -30,14 +31,15 @@ case class Bipartite[V](graph: UndirectedGraph[V]) {
    * @param vertex the vertex to start the search from
    */
   private def dfs(vertex: V): Unit = {
-    notVisited -= vertex
-    for (successor <- graph.adjacents(vertex)) {
-      if (notVisited.contains(successor)) {
-        color(successor) = !color(vertex)
-        dfs(successor)
-      }
-      else if (color(successor) == color(vertex)) {
-        isTwoColorable = false
+    val vertexColor = color.getOrElseUpdate(vertex,false)
+    val adjacents = graph.adjacents(vertex).iterator
+    while (adjacents.hasNext && isTwoColorable) {
+      val successor = adjacents.next()
+      color.get(successor) match {
+        case None => color(successor) = !vertexColor
+          dfs(successor)
+        case Some(c) if c == color(vertex) => isTwoColorable = false
+        case _ =>
       }
     }
   }

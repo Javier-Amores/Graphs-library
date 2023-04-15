@@ -73,18 +73,18 @@ object TraversalTest extends App {
   println(dt.pathTo("I"))
   println(db.pathTo("F"))
 
-  println(Connected(g).isConnected)
+  println(DFTConnected(g).isConnected)
   g.deleteVertex("I")
-  println(Connected(g).isConnected)
+  println(DFTConnected(g).isConnected)
 
   g.addVertex("I")
-  val cc = ConnectedComponent(g)
-  println(cc.get("A"))
-  println(cc.get())
-  println(cc.getNumber)
+  val cc = DFTConnectedComponent(g)
+  println("component of A " + cc.componentOf("A"))
+  println(cc.components())
+  println(cc.numberOfComponents)
 
   val tc = Bipartite(g)
-  println(tc.isBipartite)
+  println("tc bi " + tc.isBipartite)
 
   val bg = MatrixGraphInt(10)
   bg.addVertex(1)
@@ -107,7 +107,7 @@ object TraversalTest extends App {
   bg.addEdge(5, 9)
 
   val twc = Bipartite(bg)
-  println(twc.isBipartite)
+  println("twc bi " + twc.isBipartite)
 
   val notCycle = Cycle(bg)
   println(notCycle.hasCycle)
@@ -115,5 +115,11 @@ object TraversalTest extends App {
   bg.addEdge(6, 7)
   val cycle = Cycle(bg)
   println(cycle.hasCycle)
+
+
+  val emptyGraph = MatrixWeightedGraphInt[Int](10)
+  val emptyGraphComponents = DFTConnectedComponent(emptyGraph).components()
+  assert(emptyGraphComponents.isInstanceOf[Set[Set[Int]]])
+  println(emptyGraphComponents)
 
 }

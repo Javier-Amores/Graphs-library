@@ -30,5 +30,5 @@ trait Traversal[V] {
    *
    * @return a mutable map representing the spanning tree
    */
-  def getSpanningTree: mutable.Map[V, mutable.Set[V]]
+  def getSpanningTree: mutable.Map[V, V]
 }

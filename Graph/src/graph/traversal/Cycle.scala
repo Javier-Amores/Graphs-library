@@ -9,11 +9,12 @@ import graph._
  * @tparam V the type of the vertices in the graph
  */
 case class Cycle[V](graph: Graph[V, IsEdge]) {
-  private val vertices = graph.vertices
-  private var notVisited = vertices
+  private var notVisited = graph.vertices
+  private val vertices = notVisited.iterator
   private var cycle: Boolean = false
 
-  for (vertex <- vertices) {
+  while (vertices.hasNext && !cycle) {
+    val vertex = vertices.next()
     if (notVisited.contains(vertex)) {
       dfs(vertex, vertex)
     }
@@ -27,7 +28,9 @@ case class Cycle[V](graph: Graph[V, IsEdge]) {
    */
   private def dfs(vertex1: V, vertex2: V): Unit = {
     notVisited -= vertex1
-    for (successor <- graph.successors(vertex1)) {
+    val successors = graph.successors(vertex1).iterator
+    while (successors.hasNext && !cycle) {
+      val successor = successors.next()
       if (notVisited.contains(successor)) {
         dfs(successor, vertex1)
       }

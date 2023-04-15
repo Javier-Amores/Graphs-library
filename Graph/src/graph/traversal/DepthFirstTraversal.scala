@@ -14,6 +14,6 @@ import scala.collection.mutable
  */
 class DepthFirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extends FirstTraversal[V](graph, startVertex) {
   protected val container: Container[IsEdge[V]] = new Stack[IsEdge[V]]
-  protected val spanningTree: mutable.Map[V, mutable.Set[V]] = traverse()
+  protected val spanningTree: mutable.Map[V, V] = traverse()
 
 }
