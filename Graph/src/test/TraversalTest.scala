@@ -121,5 +121,6 @@ object TraversalTest extends App {
   val emptyGraphComponents = DFTConnectedComponent(emptyGraph).components()
   assert(emptyGraphComponents.isInstanceOf[Set[Set[Int]]])
   println(emptyGraphComponents)
+  // val emptycon = DFTConnected(emptyGraph).isConnected //error
 
 }

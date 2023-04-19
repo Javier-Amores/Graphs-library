@@ -15,4 +15,6 @@ import scala.collection.mutable
 class BreadthFirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extends FirstTraversal[V](graph, startVertex) {
   protected val container: Container[IsEdge[V]] = new Queue[IsEdge[V]]
   protected val spanningTree: mutable.Map[V, V] = traverse()
+
+  //def shortestPathDistance(vertex:V):Int
 }

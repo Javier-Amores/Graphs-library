@@ -31,7 +31,7 @@ case class Bipartite[V](graph: UndirectedGraph[V]) {
    * @param vertex the vertex to start the search from
    */
   private def dfs(vertex: V): Unit = {
-    val vertexColor = color.getOrElseUpdate(vertex,false)
+    val vertexColor = color.getOrElseUpdate(vertex, false)
     val adjacents = graph.adjacents(vertex).iterator
     while (adjacents.hasNext && isTwoColorable) {
       val successor = adjacents.next()
