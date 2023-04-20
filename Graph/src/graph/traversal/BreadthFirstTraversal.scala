@@ -23,7 +23,7 @@ class BreadthFirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extends 
    * @param vertex a vertex from the graph
    * @return An option with the shortest path distance if the nodes are connected, None otherwise
    */
-  def shortestPathDistance(vertex:V):Option[Int] = shortestPathDistance(vertex, 0)
+  def shortestPathDistance(vertex: V): Option[Int] = shortestPathDistance(vertex, 0)
 
 
   @tailrec
@@ -34,7 +34,7 @@ class BreadthFirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extends 
         Some(distance)
       }
       else {
-        shortestPathDistance(parentVertex, distance+1)
+        shortestPathDistance(parentVertex, distance + 1)
       }
     }
   }

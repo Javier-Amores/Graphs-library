@@ -9,16 +9,20 @@ import graph._
  * @tparam V the type of the vertices in the graph
  */
 case class Cycle[V](graph: Graph[V, IsEdge]) {
-  private var notVisited = graph.vertices
-  private val vertices = notVisited.iterator
   private var cycle: Boolean = false
+  private var notVisited = graph.vertices
 
-  while (vertices.hasNext && !cycle) {
-    val vertex = vertices.next()
-    if (notVisited.contains(vertex)) {
-      dfs(vertex, vertex)
+  private def main(): Unit = {
+    val vertices = notVisited.iterator
+    while (vertices.hasNext && !cycle) {
+      val vertex = vertices.next()
+      if (notVisited.contains(vertex)) {
+        dfs(vertex, vertex)
+      }
     }
   }
+
+  main()
 
   /**
    * Depth-first search algorithm that searches for cycles in the graph.

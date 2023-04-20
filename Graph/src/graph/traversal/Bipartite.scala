@@ -12,18 +12,21 @@ import scala.collection.mutable
  * @tparam V the type of the vertices in the graph
  */
 case class Bipartite[V](graph: UndirectedGraph[V]) {
-  private val vertices = graph.vertices.iterator
   private val color = mutable.Map[V, Boolean]()
   private var isTwoColorable: Boolean = true
 
-  while (vertices.hasNext && isTwoColorable) {
-    val vertex = vertices.next
-    color.get(vertex) match {
-      case None => dfs(vertex)
-      case _ =>
+  private def main(): Unit = {
+    val vertices = graph.vertices.iterator
+    while (vertices.hasNext && isTwoColorable) {
+      val vertex = vertices.next
+      color.get(vertex) match {
+        case None => dfs(vertex)
+        case _ =>
+      }
     }
   }
 
+  main()
 
   /**
    * Performs a depth-first search to check if the graph is bipartite.
