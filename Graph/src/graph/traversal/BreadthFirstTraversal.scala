@@ -2,6 +2,7 @@ package graph.traversal
 
 import graph._
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 
@@ -16,5 +17,25 @@ class BreadthFirstTraversal[V](graph: Graph[V, IsEdge], startVertex: V) extends 
   protected val container: Container[IsEdge[V]] = new Queue[IsEdge[V]]
   protected val spanningTree: mutable.Map[V, V] = traverse()
 
-  //def shortestPathDistance(vertex:V):Int
+  /**
+   * Computes the shortest path distance between the starting vertex and the given vertex.
+   *
+   * @param vertex a vertex from the graph
+   * @return An option with the shortest path distance if the nodes are connected, None otherwise
+   */
+  def shortestPathDistance(vertex:V):Option[Int] = shortestPathDistance(vertex, 0)
+
+
+  @tailrec
+  private def shortestPathDistance(vertex: V, distance: Int): Option[Int] = {
+    spanningTree.get(vertex) match {
+      case None => None
+      case Some(parentVertex) => if (parentVertex == vertex) {
+        Some(distance)
+      }
+      else {
+        shortestPathDistance(parentVertex, distance+1)
+      }
+    }
+  }
 }
