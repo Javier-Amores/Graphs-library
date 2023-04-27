@@ -1,5 +1,5 @@
 import graph._
-import graph.traversal.PrimMST
+import graph.traversal.{KruskalMST, PrimMST}
 
 object MSTTest extends App{
 
@@ -24,6 +24,9 @@ object MSTTest extends App{
   g.addEdge(3,2,0.17)
   g.addEdge(3,6,0.52)
 
-  val mst = PrimMST(g)
-  println(mst.getMstEdges)
+  val mstP = PrimMST(g)
+  println(mstP.getMstEdges)
+
+  val mstK = KruskalMST(g)
+  println(mstK.getMstEdges)
 }
