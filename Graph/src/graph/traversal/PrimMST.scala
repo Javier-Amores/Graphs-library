@@ -1,21 +1,21 @@
 package graph.traversal
 
 import graph._
-
 import scala.collection.mutable
-
 import util.control.Breaks._
+import Numeric.Implicits._
 
-case class PrimMST[V,W](graph: UndirectedWeightedGraph[V,W])(implicit ordering:Ordering[W]) extends MinimumSpanningTree[V,W]{
+case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends MinimumSpanningTree[V,W]{
 
   private val mstEdges = mutable.Set[WeightedEdge[V,W]]()
   private val visited = mutable.Set[V]()
-  private var mstWeight:W = null.asInstanceOf[W]
-  private val pq:mutable.PriorityQueue[WeightedEdge[V,W]] = mutable.PriorityQueue[WeightedEdge[V,W]]()(Ordering.by(weightOrder).reverse)
+  private val pq = mutable.PriorityQueue.empty[WeightedEdge[V,W]](Ordering.by(weightOrder).reverse)
+  private val mstWeight:W = main()
 
-  private def main():Unit = {
+  private def main():W = {
     val connected = DFTConnected(graph)
     if (connected.isConnected) {
+      var mstWeight:W = null.asInstanceOf[W]
       val startingVertex:V = graph.vertices.head
       visit(startingVertex)
       while (pq.nonEmpty) {
@@ -26,19 +26,19 @@ case class PrimMST[V,W](graph: UndirectedWeightedGraph[V,W])(implicit ordering:O
             break
           } else {
             mstEdges += edge
-           // mstWeight = mstWeight+weight
+            mstWeight += weight
             if (!visited.contains(vertex1)) visit(vertex1)
             if (!visited.contains(vertex2)) visit(vertex2)
           }
         }
       }
+      mstWeight
     } else {
       throw GraphException(s"Graph $graph isn't connected.")
     }
 
   }
 
-  main()
 
   private def visit(vertex: V): Unit = {
     visited += vertex

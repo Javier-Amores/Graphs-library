@@ -26,7 +26,9 @@ object MSTTest extends App{
 
   val mstP = PrimMST(g)
   println(mstP.getMstEdges)
+  println(mstP.totalWeight)
 
   val mstK = KruskalMST(g)
   println(mstK.getMstEdges)
+  println(mstK.totalWeight)
 }
