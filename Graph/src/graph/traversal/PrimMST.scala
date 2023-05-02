@@ -5,6 +5,12 @@ import scala.collection.mutable
 import util.control.Breaks._
 import Numeric.Implicits._
 
+/**
+ * A class that implements the Prim's algorithm to find the minimum spanning tree of an undirected weighted graph.
+ * @param graph the graph for which to find the minimum spanning tree
+ * @tparam V the type of vertices in the graph
+ * @tparam W the type of weights associated with the edges in the graph
+ */
 case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends MinimumSpanningTree[V,W]{
 
   private val mstEdges = mutable.Set[WeightedEdge[V,W]]()
@@ -12,6 +18,10 @@ case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends Min
   private val pq = mutable.PriorityQueue.empty[WeightedEdge[V,W]](Ordering.by(weightOrder).reverse)
   private val mstWeight:W = main()
 
+  /**
+   * Executes the Prim's algorithm to find the minimum spanning tree of the input graph.
+   * @return the total weight of the minimum spanning tree
+   */
   private def main():W = {
     val connected = DFTConnected(graph)
     if (connected.isConnected) {
@@ -40,6 +50,10 @@ case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends Min
   }
 
 
+  /**
+   * Visits the specified vertex and adds all its valid incident edges to the priority queue.
+   * @param vertex the vertex to visit
+   */
   private def visit(vertex: V): Unit = {
     visited += vertex
     for (edge <- graph.incidentsFrom(vertex)) {
@@ -51,9 +65,12 @@ case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends Min
 
   }
 
+
   private def weightOrder(weightedEdge: WeightedEdge[V,W]):W = weightedEdge.weight
 
+
   def getMstEdges:mutable.Set[WeightedEdge[V,W]] = mstEdges
+
 
   def totalWeight:W = mstWeight
 

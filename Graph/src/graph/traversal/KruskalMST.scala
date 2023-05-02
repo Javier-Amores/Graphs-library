@@ -5,11 +5,21 @@ import scala.collection.mutable
 import util.control.Breaks._
 import Numeric.Implicits._
 
+/**
+ * A class that implements the Kruskal's algorithm to find the minimum spanning tree of an undirected weighted graph.
+ * @param graph the graph for which to find the minimum spanning tree
+ * @tparam V the type of vertices in the graph
+ * @tparam W the type of weights associated with the edges in the graph
+ */
 case class KruskalMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends MinimumSpanningTree[V,W]{
 
   private val mstEdges = mutable.Set[WeightedEdge[V,W]]()
   private val mstWeight:W = main()
 
+  /**
+   * Executes the Kruskal's algorithm to find the minimum spanning tree of the input graph.
+   * @return the total weight of the minimum spanning tree
+   */
   private def main():W = {
     var mstWeight:W = null.asInstanceOf[W]
     val order = graph.order
