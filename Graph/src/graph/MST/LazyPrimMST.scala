@@ -1,32 +1,30 @@
-package graph.traversal
+package graph.MST
 
 import graph._
+import graph.traversal.DFTConnected
+
 import scala.collection.mutable
-import util.control.Breaks._
-import Numeric.Implicits._
+import scala.math.Numeric.Implicits._
+import scala.util.control.Breaks._
 
 /**
  * A class that implements the Prim's algorithm to find the minimum spanning tree of an undirected weighted graph.
+ *
  * @param graph the graph for which to find the minimum spanning tree
  * @tparam V the type of vertices in the graph
  * @tparam W the type of weights associated with the edges in the graph
  */
-case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends MinimumSpanningTree[V,W]{
+case class LazyPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) extends PrimMST[V, W] {
 
-  private val mstEdges = mutable.Set[WeightedEdge[V,W]]()
-  private val visited = mutable.Set[V]()
-  private val pq = mutable.PriorityQueue.empty[WeightedEdge[V,W]](Ordering.by(weightOrder).reverse)
-  private val mstWeight:W = main()
+  protected val visited: mutable.Set[V] = mutable.Set[V]()
+  private val pq = mutable.PriorityQueue.empty[WeightedEdge[V, W]](Ordering.by(weightOrder).reverse)
+  private val mstWeight: W = main()
 
-  /**
-   * Executes the Prim's algorithm to find the minimum spanning tree of the input graph.
-   * @return the total weight of the minimum spanning tree
-   */
-  private def main():W = {
+  protected def main(): W = {
     val connected = DFTConnected(graph)
     if (connected.isConnected) {
-      var mstWeight:W = null.asInstanceOf[W]
-      val startingVertex:V = graph.vertices.head
+      var mstWeight: W = null.asInstanceOf[W]
+      val startingVertex: V = graph.vertices.head
       visit(startingVertex)
       while (pq.nonEmpty) {
         val edge = pq.dequeue()
@@ -52,6 +50,7 @@ case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends Min
 
   /**
    * Visits the specified vertex and adds all its valid incident edges to the priority queue.
+   *
    * @param vertex the vertex to visit
    */
   private def visit(vertex: V): Unit = {
@@ -65,13 +64,9 @@ case class PrimMST[V,W:Numeric](graph: UndirectedWeightedGraph[V,W]) extends Min
 
   }
 
+  def getMstEdges: Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]()++mstEdges
+  def totalWeight: W = mstWeight
 
-  private def weightOrder(weightedEdge: WeightedEdge[V,W]):W = weightedEdge.weight
-
-
-  def getMstEdges:mutable.Set[WeightedEdge[V,W]] = mstEdges
-
-
-  def totalWeight:W = mstWeight
+  private def weightOrder(weightedEdge: WeightedEdge[V, W]): W = weightedEdge.weight
 
 }
