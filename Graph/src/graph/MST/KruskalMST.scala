@@ -60,7 +60,7 @@ case class KruskalMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exten
 
   private def weightOrder(weightedEdge: WeightedEdge[V, W]): W = weightedEdge.weight
 
-  def getMstEdges: Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]()++mstEdges
+  def getMstEdges: Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]() ++ mstEdges
 
   def totalWeight: W = mstWeight
 

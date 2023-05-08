@@ -27,7 +27,7 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
       val idToVertex: mutable.Map[Int, V] = for ((v, i) <- vertexToId) yield (i, v)
       val vertexDistance: mutable.Map[Int, W] = mutable.Map[Int, W]()
       vertexDistance(0) = null.asInstanceOf[W]
-      pq.enqueue(0,vertexDistance(0))
+      pq.enqueue(0, vertexDistance(0))
       while (pq.nonEmpty()) {
         val vertexId = pq.dequeue()
         visited(vertexId) = true
@@ -48,7 +48,7 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
                     pq.enqueue(adjacentVertexId, vertexDistance(adjacentVertexId))
                   }
 
-                case  Some(distance) if ord.compare(edge.weight, distance)<0 =>
+                case Some(distance) if ord.compare(edge.weight, distance) < 0 =>
                   edgeTo(adjacentVertexId) = edge
                   vertexDistance(adjacentVertexId) = edge.weight
                   if (pq.contains(adjacentVertexId)) {
@@ -64,8 +64,8 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
           }
         }
       }
-      var totalWeight:W = null.asInstanceOf[W]
-      vertexDistance.foreach {case (_,cost) => totalWeight+=cost;case _ =>}
+      var totalWeight: W = null.asInstanceOf[W]
+      vertexDistance.foreach { case (_, cost) => totalWeight += cost; case _ => }
       totalWeight
     } else {
       throw GraphException(s"Graph $graph isn't connected.")

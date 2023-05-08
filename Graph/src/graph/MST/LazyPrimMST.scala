@@ -64,7 +64,8 @@ case class LazyPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exte
 
   }
 
-  def getMstEdges: Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]()++mstEdges
+  def getMstEdges: Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]() ++ mstEdges
+
   def totalWeight: W = mstWeight
 
   private def weightOrder(weightedEdge: WeightedEdge[V, W]): W = weightedEdge.weight

@@ -12,13 +12,11 @@ protected case class IndexPriorityQueue[A](maxN: Int)(implicit val ord: Ordering
   private val items: mutable.Map[Int, A] = mutable.Map()
 
 
-
   private def more(i: Int, j: Int): Boolean = {
     ord.compare(items(pq(i)), items(pq(j))) > 0
   }
 
 
-  
   private def exchange(i: Int, j: Int): Unit = {
     val t = pq(i)
     pq(i) = pq(j)
