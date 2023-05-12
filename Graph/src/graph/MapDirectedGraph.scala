@@ -101,7 +101,7 @@ class MapDirectedGraph[V] extends DirectedUnweightedGraph[V] {
   override def edges[Edge[X] >: DirectedEdge[X]]: immutable.Set[Edge[V]] = {
     var edgeSet = immutable.Set[Edge[V]]()
     for ((source, destinationSet) <- succs) {
-      destinationSet.foreach(destination => edgeSet += DirectedEdge(source, destination)) //??
+      destinationSet.foreach(destination => edgeSet += DirectedEdge(source, destination))
     }
     edgeSet
   }

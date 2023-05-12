@@ -10,7 +10,6 @@ object MapDirectedWeightedGraphTest extends App {
   g.addVertex("E")
   g.addVertex("F")
   g.addVertex("G")
-
   g.addEdge(DirectedWeightedEdge("E", "G", 10))
   g.addEdge(DirectedWeightedEdge("G", "E", 0))
   g.addEdge(DirectedWeightedEdge("G", "F", 100))
@@ -65,6 +64,7 @@ object MapDirectedWeightedGraphTest extends App {
   println(g.outdegree("A"))
   println(g.degree("A"))
   println("weight of edge (F,D) = " + g.weightOfEdge("F", "D").get)
+
 
 
 }
