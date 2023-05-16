@@ -1,7 +1,7 @@
 package graph.shortestPath
 
-import graph.traversal.Cycle
-import graph.{DirectedWeightedEdge, DirectedWeightedGraph, GraphException, MapDirectedWeightedGraph}
+import graph.traversal.{Cycle, DirectedCycleFinder}
+import graph.{DirectedEdge, DirectedWeightedEdge, DirectedWeightedGraph, GraphException, MapDirectedWeightedGraph}
 
 import scala.collection.mutable
 
@@ -9,8 +9,7 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
 
   private val distTo = mutable.Map[V, W]()
   private val edgeTo = mutable.Map[V, DirectedWeightedEdge[V, W]]()
-  //private val cycle:mutable.Iterable[DirectedWeightedEdge[V, W]] = ???
-  private var negativeCycle:Boolean = false
+  private var cycle: Iterable[DirectedWeightedEdge[V,W]] = Iterable[DirectedWeightedEdge[V,W]]()
 
   private def BellmanFordSP(): Unit = {
     val onQueue = mutable.Set[V]()
@@ -66,14 +65,14 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
         case None =>
       }
     }
-    val cf = Cycle[V](spt)
-    negativeCycle = cf.hasCycle
+    val cf = DirectedCycleFinder[V](spt)
+    cycle= cf.cycle().asInstanceOf[Iterable[DirectedWeightedEdge[V,W]]]
 
   }
 
-  def hasNegativeCycle: Boolean = negativeCycle
+  def hasNegativeCycle: Boolean = cycle.nonEmpty
 
-  //def negattiveCycle: mutable.Iterable[DirectedWeightedEdge[V, W]] = ???
+  def negativeCycle: Iterable[DirectedWeightedEdge[V, W]] = cycle
 
 
   def distTo(vertex: V): Option[W] = distTo.get(vertex) match {

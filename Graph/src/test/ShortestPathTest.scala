@@ -57,12 +57,18 @@ object ShortestPathTest extends App {
   negwdg.addEdge(6,0,-1.4)
   negwdg.addEdge(6,4,-1.25)
 
-  val bfsp2 = BellmanFordShortestPath[Int,Double](negwdg,0)
+  var bfsp2 = BellmanFordShortestPath[Int,Double](negwdg,0)
   for (i <- 0 to 7) {
     println(bfsp2.distTo(i))
   }
   println(bfsp2.pathTo(1))
+  println(bfsp2.hasNegativeCycle)
+  println(bfsp2.negativeCycle)
 
+  negwdg.addEdge(3,5,-1)
+  bfsp2 = BellmanFordShortestPath[Int,Double](negwdg,0)
+  println(bfsp2.hasNegativeCycle)
+  println(bfsp2.negativeCycle)
 
 val ug = MapWeightedGraph[Int,Int]()
   for (i<- 0 to 4) {
@@ -76,9 +82,14 @@ val ug = MapWeightedGraph[Int,Int]()
   ug.addEdge(0,4,7)
   ug.addEdge(4,3,3)
 
+
   val ud = UndirectedDijkstraShortestPath(ug,0)
   println(ud.distTo(3))
   println(ud.pathTo(3))
+
+
+
+
 
 
   """

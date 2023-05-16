@@ -2,6 +2,8 @@ package graph.traversal
 
 import graph._
 
+import scala.collection.mutable
+
 /**
  * Class for checking if a graph is acyclic
  *

@@ -25,6 +25,7 @@ object TraversalTest extends App {
   g.addEdge("F", "D")
   g.addEdge("D", "E")
 
+
   val t = new DepthFirstTraversal(g, "A")
   val b = new BreadthFirstTraversal(g, "A")
 
