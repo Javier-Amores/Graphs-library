@@ -29,7 +29,7 @@ object ShortestPathTest extends App {
 
   println(sp.pathTo(6))
 
-  val bfsp = BellmanFordShortestPath[Int,Double](dg,0)
+  val bfsp = BellmanFordShortestPath[Int, Double](dg, 0)
   for (i <- 0 to 7) {
     println(bfsp.distTo(i))
   }
@@ -41,23 +41,23 @@ object ShortestPathTest extends App {
     negwdg.addVertex(i)
   }
 
-  negwdg.addEdge(4,5,0.35)
-  negwdg.addEdge(5,4,0.35)
-  negwdg.addEdge(4,7,0.37)
-  negwdg.addEdge(5,7,0.28)
-  negwdg.addEdge(7,5,0.28)
-  negwdg.addEdge(5,1,0.32)
-  negwdg.addEdge(0,4,0.38)
-  negwdg.addEdge(0,2,0.26)
-  negwdg.addEdge(7,3,0.39)
-  negwdg.addEdge(1,3,0.29)
-  negwdg.addEdge(2,7,0.34)
-  negwdg.addEdge(6,2,-1.20)
-  negwdg.addEdge(3,6,0.52)
-  negwdg.addEdge(6,0,-1.4)
-  negwdg.addEdge(6,4,-1.25)
+  negwdg.addEdge(4, 5, 0.35)
+  negwdg.addEdge(5, 4, 0.35)
+  negwdg.addEdge(4, 7, 0.37)
+  negwdg.addEdge(5, 7, 0.28)
+  negwdg.addEdge(7, 5, 0.28)
+  negwdg.addEdge(5, 1, 0.32)
+  negwdg.addEdge(0, 4, 0.38)
+  negwdg.addEdge(0, 2, 0.26)
+  negwdg.addEdge(7, 3, 0.39)
+  negwdg.addEdge(1, 3, 0.29)
+  negwdg.addEdge(2, 7, 0.34)
+  negwdg.addEdge(6, 2, -1.20)
+  negwdg.addEdge(3, 6, 0.52)
+  negwdg.addEdge(6, 0, -1.4)
+  negwdg.addEdge(6, 4, -1.25)
 
-  var bfsp2 = BellmanFordShortestPath[Int,Double](negwdg,0)
+  var bfsp2 = BellmanFordShortestPath[Int, Double](negwdg, 0)
   for (i <- 0 to 7) {
     println(bfsp2.distTo(i))
   }
@@ -65,31 +65,27 @@ object ShortestPathTest extends App {
   println(bfsp2.hasNegativeCycle)
   println(bfsp2.negativeCycle)
 
-  negwdg.addEdge(3,5,-1)
-  bfsp2 = BellmanFordShortestPath[Int,Double](negwdg,0)
+  negwdg.addEdge(3, 5, -1)
+  bfsp2 = BellmanFordShortestPath[Int, Double](negwdg, 0)
   println(bfsp2.hasNegativeCycle)
   println(bfsp2.negativeCycle)
 
-val ug = MapWeightedGraph[Int,Int]()
-  for (i<- 0 to 4) {
+  val ug = MapWeightedGraph[Int, Int]()
+  for (i <- 0 to 4) {
     ug.addVertex(i)
   }
-  ug.addEdge(0,1,3)
-  ug.addEdge(1,2,1)
-  ug.addEdge(3,1,4)
-  ug.addEdge(3,2,2)
-  ug.addEdge(0,3,8)
-  ug.addEdge(0,4,7)
-  ug.addEdge(4,3,3)
+  ug.addEdge(0, 1, 3)
+  ug.addEdge(1, 2, 1)
+  ug.addEdge(3, 1, 4)
+  ug.addEdge(3, 2, 2)
+  ug.addEdge(0, 3, 8)
+  ug.addEdge(0, 4, 7)
+  ug.addEdge(4, 3, 3)
 
 
-  val ud = UndirectedDijkstraShortestPath(ug,0)
+  val ud = UndirectedDijkstraShortestPath(ug, 0)
   println(ud.distTo(3))
   println(ud.pathTo(3))
-
-
-
-
 
 
   """

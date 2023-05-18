@@ -1,9 +1,18 @@
 package graph.shortestPath
 
-import graph.{GraphException,DirectedWeightedEdge, DirectedWeightedGraph, IndexPriorityQueue, MapDirectedWeightedGraph, UndirectedWeightedGraph, WeightedEdge}
+import graph.{GraphException, DirectedWeightedEdge, DirectedWeightedGraph, IndexPriorityQueue, MapDirectedWeightedGraph, UndirectedWeightedGraph, WeightedEdge}
 
 import scala.collection.mutable
 
+/**
+ * Represents a Dijkstra's shortest path algorithm for an undirected weighted graph.
+ *
+ * @param graph  The graph on which the algorithm is applied
+ * @param source The source vertex from which to compute the shortest paths
+ * @param ord    The ordering of weights used for comparisons
+ * @tparam V The type of vertices in the graph
+ * @tparam W The type of weights
+ */
 case class UndirectedDijkstraShortestPath[V, W: Numeric](graph: UndirectedWeightedGraph[V, W], source: V)(implicit ord: Ordering[W]) extends DijkstraShortestPath[V, W, ({type E[X] = WeightedEdge[X, W]})#E] {
 
   private val edgeTo = Array.ofDim[WeightedEdge[V, W]](graph.order)
@@ -20,6 +29,9 @@ case class UndirectedDijkstraShortestPath[V, W: Numeric](graph: UndirectedWeight
     m
   }
 
+  /**
+   * Executes the Dijkstra's shortest path algorithm.
+   */
   private def main(): Unit = {
     val idToVertex: mutable.Map[Int, V] = for ((v, i) <- vertexToId) yield (i, v)
 

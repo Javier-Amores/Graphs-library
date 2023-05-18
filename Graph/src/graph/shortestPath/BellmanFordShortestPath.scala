@@ -5,12 +5,24 @@ import graph.{DirectedEdge, DirectedWeightedEdge, DirectedWeightedGraph, GraphEx
 
 import scala.collection.mutable
 
+/**
+ * Represents a Bellman-Ford shortest path algorithm for a directed weighted graph.
+ *
+ * @param graph  The graph on which the algorithm is applied
+ * @param source The source vertex from which to compute the shortest paths
+ * @param ord    The ordering of weights used for comparisons
+ * @tparam V The type of vertices in the graph
+ * @tparam W The type of weights
+ */
 case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V, W], source: V)(implicit ord: Ordering[W]) extends ShortestPath[V, W, ({type E[X] = DirectedWeightedEdge[X, W]})#E] {
 
   private val distTo = mutable.Map[V, W]()
   private val edgeTo = mutable.Map[V, DirectedWeightedEdge[V, W]]()
-  private var cycle: Iterable[DirectedWeightedEdge[V,W]] = Iterable[DirectedWeightedEdge[V,W]]()
+  private var cycle: Iterable[DirectedWeightedEdge[V, W]] = Iterable[DirectedWeightedEdge[V, W]]()
 
+  /**
+   * Executes the Bellman-Ford shortest path algorithm.
+   */
   private def BellmanFordSP(): Unit = {
     val onQueue = mutable.Set[V]()
     val queue = mutable.Queue[V]()
@@ -55,23 +67,36 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
 
   BellmanFordSP()
 
+  /**
+   * Finds a negative cycle in the graph, if exists.
+   */
   private def findNegativeCycle(): Unit = {
-    val spt = MapDirectedWeightedGraph[V,W]()
+    val spt = MapDirectedWeightedGraph[V, W]()
     for (vertex <- graph.vertices) {
       edgeTo.get(vertex) match {
         case Some(edge) => spt.addVertex(edge.source)
-                            spt.addVertex(edge.destination)
-                            spt.addEdge(edge)
+          spt.addVertex(edge.destination)
+          spt.addEdge(edge)
         case None =>
       }
     }
     val cf = DirectedCycleFinder[V](spt)
-    cycle= cf.cycle().asInstanceOf[Iterable[DirectedWeightedEdge[V,W]]]
+    cycle = cf.cycle().asInstanceOf[Iterable[DirectedWeightedEdge[V, W]]]
 
   }
 
+  /**
+   * Checks if there is a negative cycle in the graph.
+   *
+   * @return true if a negative cycle is found, false otherwise
+   */
   def hasNegativeCycle: Boolean = cycle.nonEmpty
 
+  /**
+   * Returns a negative cycle in the graph (or an empty iterable if such cycle doesn't exist).
+   *
+   * @return An iterable of directed weighted edges representing the negative cycle
+   */
   def negativeCycle: Iterable[DirectedWeightedEdge[V, W]] = cycle
 
 
@@ -84,6 +109,7 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
     case None => false
     case _ => true
   }
+
 
   def pathTo[Edge[X] >: DirectedWeightedEdge[X, W]](vertex: V): Iterable[Edge[V]] = {
     if (!hasPathTo(vertex)) {

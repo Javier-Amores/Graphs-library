@@ -66,5 +66,4 @@ object MapDirectedWeightedGraphTest extends App {
   println("weight of edge (F,D) = " + g.weightOfEdge("F", "D").get)
 
 
-
 }
