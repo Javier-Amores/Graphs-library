@@ -24,31 +24,26 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
    * Executes the Bellman-Ford shortest path algorithm.
    */
   private def BellmanFordSP(): Unit = {
-    val onQueue = mutable.Set[V]()
     val queue = mutable.Queue[V]()
     var cost: Int = 0
     val order: Int = graph.order
     distTo(source) = Numeric[W].zero
     queue.enqueue(source)
-    onQueue += source
     while (queue.nonEmpty && !hasNegativeCycle) {
       val vertex: V = queue.dequeue()
-      onQueue -= vertex
       for (edge <- graph.incidentsFrom(vertex)) {
         val destinationVertex = edge.destination
         distTo.get(destinationVertex) match {
           case None => distTo(destinationVertex) = Numeric[W].plus(distTo(vertex), edge.weight)
             edgeTo(destinationVertex) = edge
-            if (!onQueue.contains(destinationVertex)) {
+            if (!queue.contains(destinationVertex)) {
               queue.enqueue(destinationVertex)
-              onQueue += destinationVertex
             }
           case Some(distanceToDestination) => distTo.get(vertex) match {
             case Some(distanceToVertex) if ord.compare(distanceToDestination, Numeric[W].plus(distanceToVertex, edge.weight)) > 0 => distTo(destinationVertex) = Numeric[W].plus(distTo(vertex), edge.weight)
               edgeTo(destinationVertex) = edge
-              if (!onQueue.contains(destinationVertex)) {
+              if (!queue.contains(destinationVertex)) {
                 queue.enqueue(destinationVertex)
-                onQueue += destinationVertex
               }
             case _ =>
           }
