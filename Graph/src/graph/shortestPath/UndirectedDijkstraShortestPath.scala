@@ -35,15 +35,15 @@ case class UndirectedDijkstraShortestPath[V, W: Numeric](graph: UndirectedWeight
   private def main(): Unit = {
     val idToVertex: mutable.Map[Int, V] = for ((v, i) <- vertexToId) yield (i, v)
 
-    distTo(vertexToId(source)) = null.asInstanceOf[W]
-    pq.enqueue(vertexToId(source), null.asInstanceOf[W])
+    distTo(vertexToId(source)) = Numeric[W].zero
+    pq.enqueue(vertexToId(source), Numeric[W].zero)
     while (pq.nonEmpty()) {
       val i = pq.dequeue()
 
       for (edge <- graph.incidentsFrom(idToVertex(i))) {
         val j = vertexToId(edge.vertex2)
         distTo.get(j) match {
-          case None => distTo(j) = implicitly[Numeric[W]].plus(distTo(i), edge.weight)
+          case None => distTo(j) = Numeric[W].plus(distTo(i), edge.weight)
             edgeTo(j) = edge
             if (pq.contains(j)) {
               pq.update(j, distTo(j))
@@ -52,7 +52,7 @@ case class UndirectedDijkstraShortestPath[V, W: Numeric](graph: UndirectedWeight
               pq.enqueue(j, distTo(j))
             }
           case Some(jDistance) => distTo.get(i) match {
-            case Some(iDistance) if ord.compare(jDistance, implicitly[Numeric[W]].plus(iDistance, edge.weight)) > 0 => distTo(j) = implicitly[Numeric[W]].plus(iDistance, edge.weight)
+            case Some(iDistance) if ord.compare(jDistance, Numeric[W].plus(iDistance, edge.weight)) > 0 => distTo(j) = Numeric[W].plus(iDistance, edge.weight)
               edgeTo(j) = edge
               if (pq.contains(j)) {
                 pq.update(j, jDistance)
