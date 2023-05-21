@@ -18,6 +18,7 @@ case class LazyPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exte
 
   protected val visited: mutable.Set[V] = mutable.Set[V]()
   private val pq = mutable.PriorityQueue.empty[WeightedEdge[V, W]](Ordering.by(weightOrder).reverse)
+  private val mstEdges: mutable.Set[WeightedEdge[V, W]] = mutable.Set[WeightedEdge[V, W]]()
   private val mstWeight: W = main()
 
   protected def main(): W = {

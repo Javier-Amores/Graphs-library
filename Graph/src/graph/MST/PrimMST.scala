@@ -7,9 +7,6 @@ import scala.collection.mutable
 
 trait PrimMST[V, W] extends MinimumSpanningTree[V, W] {
 
-  protected val mstEdges: mutable.Set[WeightedEdge[V, W]] = mutable.Set[WeightedEdge[V, W]]()
-
-
   /**
    * Executes the Prim's algorithm to find the minimum spanning tree of the input graph.
    *
