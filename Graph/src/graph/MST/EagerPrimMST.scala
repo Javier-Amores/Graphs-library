@@ -26,7 +26,7 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
       })
       val idToVertex: mutable.Map[Int, V] = for ((v, i) <- vertexToId) yield (i, v)
       val vertexDistance: mutable.Map[Int, W] = mutable.Map[Int, W]()
-      vertexDistance(0) = null.asInstanceOf[W]
+      vertexDistance(0) = Numeric[W].zero
       pq.enqueue(0, vertexDistance(0))
       while (pq.nonEmpty()) {
         val vertexId = pq.dequeue()
@@ -64,7 +64,7 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
           }
         }
       }
-      var totalWeight: W = null.asInstanceOf[W]
+      var totalWeight: W = Numeric[W].zero
       vertexDistance.foreach { case (_, cost) => totalWeight += cost; case _ => }
       totalWeight
     } else {

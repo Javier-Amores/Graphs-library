@@ -23,7 +23,7 @@ case class LazyPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exte
   protected def main(): W = {
     val connected = DFTConnected(graph)
     if (connected.isConnected) {
-      var mstWeight: W = null.asInstanceOf[W]
+      var mstWeight: W = Numeric[W].zero
       val startingVertex: V = graph.vertices.head
       visit(startingVertex)
       while (pq.nonEmpty) {

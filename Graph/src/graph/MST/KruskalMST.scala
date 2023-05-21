@@ -24,7 +24,7 @@ case class KruskalMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exten
    * @return the total weight of the minimum spanning tree
    */
   private def main(): W = {
-    var mstWeight: W = null.asInstanceOf[W]
+    var mstWeight: W = Numeric[W].zero
     val order = graph.order
     val edges: IterableOnce[WeightedEdge[V, W]] = { //to help infer types in compilation
       val aux = graph.edges
