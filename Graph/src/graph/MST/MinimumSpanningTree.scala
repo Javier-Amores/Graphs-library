@@ -2,7 +2,7 @@ package graph.MST
 
 import graph.WeightedEdge
 
-import scala.collection.mutable
+import scala.collection.{immutable, mutable}
 
 /**
  * A trait representing a minimum spanning tree algorithm for a graph.
@@ -17,7 +17,7 @@ trait MinimumSpanningTree[V, W] {
    *
    * @return a mutable set of weighted edges that form the minimum spanning tree
    */
-  def getMstEdges: Set[WeightedEdge[V, W]]
+  def getMstEdges: immutable.Set[WeightedEdge[V, W]]
 
   /**
    * Returns the weight of the minimum spanning tree.

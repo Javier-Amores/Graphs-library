@@ -77,7 +77,7 @@ class MatrixDirectedWeightedGraphInt[W: ClassTag](maxOrder: Int) extends Directe
     if (source == destination) {
       throw GraphException("Self-loops are not allowed in simple graphs.")
     }
-    if (containsEdge(source, destination)) {
+    if (containsEdge(source, destination) || !containsVertex(source) || !containsVertex(destination)) {
       false
     } else {
       matrix(source)(destination) = Some(weight)

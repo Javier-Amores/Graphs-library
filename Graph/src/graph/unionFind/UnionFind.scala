@@ -1,4 +1,4 @@
-package graph
+package graph.unionFind
 
 import scala.collection.mutable
 
@@ -8,7 +8,7 @@ import scala.collection.mutable
  *
  * @param maxComponent the maximum number of objects that can be represented by the data structure
  */
-protected class UnionFind(maxComponent: Int) {
+case class UnionFind(maxComponent: Int) {
   private val id: Array[Int] = Array.ofDim[Int](maxComponent)
   private val sz: Array[Int] = Array.ofDim[Int](maxComponent)
   private var count: Int = maxComponent

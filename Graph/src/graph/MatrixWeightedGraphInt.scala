@@ -75,7 +75,7 @@ class MatrixWeightedGraphInt[W: ClassTag](maxOrder: Int) extends UndirectedWeigh
     if (vertex1 == vertex2) {
       throw GraphException("Self-loops are not allowed in simple graphs.")
     }
-    if (containsEdge(vertex1, vertex2)) {
+    if (containsEdge(vertex1, vertex2) || !containsVertex(vertex1) || !containsVertex(vertex2)) {
       false
     } else {
       matrix(vertex1)(vertex2) = Some(weight)

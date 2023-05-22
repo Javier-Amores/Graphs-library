@@ -2,7 +2,7 @@ package graph.traversal
 
 import graph._
 
-import scala.collection.mutable
+import scala.collection.{immutable, mutable}
 
 
 /**
@@ -30,8 +30,8 @@ abstract class ConnectedComponent[V](graph: UndirectedGraph[V]) {
   private def computeMaps(): Unit = {
     var vertices = graph.vertices.iterator
     var counter: Int = 0
-    while (vertices.hasNext) {
-      val vertex = vertices.next()
+    while (vertices.nonEmpty) {
+      val vertex = vertices.iterator.next()
       componentNumberToSet(counter) = mutable.Set[V]()
       val traversalOfVertex = traversal(vertex)
       traversalOfVertex.getSpanningTree.foreach { case (successor, _) => vertexToNumberOfComponent(successor) = counter
@@ -52,14 +52,14 @@ abstract class ConnectedComponent[V](graph: UndirectedGraph[V]) {
    * @param vertex the vertex to find the connected component of
    * @return a set of vertices in the same connected component
    */
-  def componentOf(vertex: V): Set[V] = Set.empty ++ componentNumberToSet(vertexToNumberOfComponent(vertex))
+  def componentOf(vertex: V): immutable.Set[V] = Set.empty ++ componentNumberToSet(vertexToNumberOfComponent(vertex))
 
   /**
    * Get a set of sets, where each set represents a connected component in the graph.
    *
    * @return a set of sets representing connected components in the graph
    */
-  def components(): Set[Set[V]] = {
+  def components(): immutable.Set[Set[V]] = {
     var connectedComponents = Set[Set[V]]()
     componentNumberToSet.foreach(x => connectedComponents = connectedComponents + (Set.empty ++ x._2))
     connectedComponents

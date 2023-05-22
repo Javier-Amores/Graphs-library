@@ -16,7 +16,7 @@ import scala.util.control.Breaks._
  */
 case class LazyPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) extends PrimMST[V, W] {
 
-  protected val visited: mutable.Set[V] = mutable.Set[V]()
+  private val visited: mutable.Set[V] = mutable.Set[V]()
   private val pq = mutable.PriorityQueue.empty[WeightedEdge[V, W]](Ordering.by(weightOrder).reverse)
   private val mstEdges: mutable.Set[WeightedEdge[V, W]] = mutable.Set[WeightedEdge[V, W]]()
   private val mstWeight: W = main()
@@ -28,8 +28,7 @@ case class LazyPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exte
       val startingVertex: V = graph.vertices.head
       visit(startingVertex)
       while (pq.nonEmpty) {
-        val edge = pq.dequeue()
-        val WeightedEdge(vertex1, vertex2, weight) = edge
+        val edge@WeightedEdge(vertex1, vertex2, weight) = pq.dequeue()
         breakable {
           if (visited.contains(vertex1) && visited.contains(vertex2)) {
             break

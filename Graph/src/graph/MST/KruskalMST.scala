@@ -1,8 +1,9 @@
 package graph.MST
 
-import graph.{UndirectedWeightedGraph, UnionFind, WeightedEdge}
+import graph.unionFind.UnionFind
+import graph.{UndirectedWeightedGraph, WeightedEdge}
 
-import scala.collection.mutable
+import scala.collection.{immutable, mutable}
 import scala.math.Numeric.Implicits._
 import scala.util.control.Breaks._
 
@@ -30,9 +31,8 @@ case class KruskalMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exten
       val aux = graph.edges
       aux
     }
-    val pq = mutable.PriorityQueue[WeightedEdge[V, W]]()(Ordering.by(weightOrder).reverse)
-    pq ++= edges
-    val uf = new UnionFind(order)
+    val pq = mutable.PriorityQueue.from(edges)(Ordering.by(weightOrder).reverse)
+    val uf = UnionFind(order)
     val IDVertexMap: mutable.Map[V, Int] = mutable.Map[V, Int]()
     var idNumber: Int = 0
     graph.vertices.foreach(vertex => {
@@ -60,7 +60,7 @@ case class KruskalMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W]) exten
 
   private def weightOrder(weightedEdge: WeightedEdge[V, W]): W = weightedEdge.weight
 
-  def getMstEdges: Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]() ++ mstEdges
+  def getMstEdges: immutable.Set[WeightedEdge[V, W]] = Set[WeightedEdge[V, W]]() ++ mstEdges
 
   def totalWeight: W = mstWeight
 

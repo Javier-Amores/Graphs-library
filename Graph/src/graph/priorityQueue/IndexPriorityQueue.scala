@@ -1,4 +1,4 @@
-package graph
+package graph.priorityQueue
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -11,7 +11,7 @@ import scala.math.pow
  * @param ord  The ordering used to compare elements in the priority queue
  * @tparam A The type of elements stored in the priority queue
  */
-protected case class IndexPriorityQueue[A](maxN: Int)(implicit val ord: Ordering[A]) {
+case class IndexPriorityQueue[A](maxN: Int)(implicit val ord: Ordering[A]) {
 
   private var N: Int = 0
   private val pq: Array[Int] = Array.fill(maxN + 1)(0)

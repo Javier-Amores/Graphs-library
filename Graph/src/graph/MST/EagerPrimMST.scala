@@ -1,21 +1,21 @@
 package graph.MST
 
+import graph.priorityQueue.IndexPriorityQueue
 import graph.traversal.DFTConnected
-import graph.{GraphException, IndexPriorityQueue, UndirectedWeightedGraph, WeightedEdge}
+import graph.{GraphException, UndirectedWeightedGraph, WeightedEdge}
 
-import scala.collection.mutable
+import scala.collection.{immutable, mutable}
 import scala.util.control.Breaks._
 import scala.math.Numeric.Implicits._
 
 
 case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(implicit ord: Ordering[W]) extends PrimMST[V, W] {
-  private val visited: Array[Boolean] = Array.fill(graph.order)(false)
-  private val pq = IndexPriorityQueue[W](graph.order)(ord)
-  private val edgeTo: Array[WeightedEdge[V, W]] = Array.ofDim[WeightedEdge[V, W]](graph.order)
+  private val edgeTo : mutable.Map[V,WeightedEdge[V, W]] = mutable.Map[V,WeightedEdge[V, W]]()
   private val mstWeight: W = main()
 
-
   protected def main(): W = {
+    val pq = IndexPriorityQueue[W](graph.order)(ord)
+    val visited: mutable.Set[V] = mutable.Set[V]()
     val connected = DFTConnected(graph)
     if (connected.isConnected) {
       val vertexToId: mutable.Map[V, Int] = mutable.Map[V, Int]()
@@ -25,37 +25,37 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
         idNumber += 1
       })
       val idToVertex: mutable.Map[Int, V] = for ((v, i) <- vertexToId) yield (i, v)
-      val vertexDistance: mutable.Map[Int, W] = mutable.Map[Int, W]()
-      vertexDistance(0) = Numeric[W].zero
-      pq.enqueue(0, vertexDistance(0))
+      val vertexDistance: mutable.Map[V, W] = mutable.Map[V, W]()
+      vertexDistance(idToVertex(0)) = Numeric[W].zero
+      pq.enqueue(0, Numeric[W].zero)
       while (pq.nonEmpty()) {
         val vertexId = pq.dequeue()
-        visited(vertexId) = true
+        visited += idToVertex(vertexId)
         for (edge <- graph.incidentsFrom(idToVertex(vertexId))) {
-          val adjacentVertexId: Int = vertexToId(edge.vertex2)
+          val adjacentVertex: V = edge.vertex2
           breakable {
-            if (visited(adjacentVertexId)) {
+            if (visited.contains(adjacentVertex)) {
               break
             } else {
-              vertexDistance.get(adjacentVertexId) match {
+              vertexDistance.get(adjacentVertex) match {
                 case None =>
-                  edgeTo(adjacentVertexId) = edge
-                  vertexDistance(adjacentVertexId) = edge.weight
-                  if (pq.contains(adjacentVertexId)) {
-                    pq.update(adjacentVertexId, vertexDistance(adjacentVertexId))
+                  edgeTo(adjacentVertex) = edge
+                  vertexDistance(adjacentVertex) = edge.weight
+                  if (pq.contains(vertexToId(adjacentVertex))) {
+                    pq.update(vertexToId(adjacentVertex), vertexDistance(adjacentVertex))
                   }
                   else {
-                    pq.enqueue(adjacentVertexId, vertexDistance(adjacentVertexId))
+                    pq.enqueue(vertexToId(adjacentVertex), vertexDistance(adjacentVertex))
                   }
 
                 case Some(distance) if ord.compare(edge.weight, distance) < 0 =>
-                  edgeTo(adjacentVertexId) = edge
-                  vertexDistance(adjacentVertexId) = edge.weight
-                  if (pq.contains(adjacentVertexId)) {
-                    pq.update(adjacentVertexId, vertexDistance(adjacentVertexId))
+                  edgeTo(adjacentVertex) = edge
+                  vertexDistance(adjacentVertex) = edge.weight
+                  if (pq.contains(vertexToId(adjacentVertex))) {
+                    pq.update(vertexToId(adjacentVertex), vertexDistance(adjacentVertex))
                   }
                   else {
-                    pq.enqueue(adjacentVertexId, vertexDistance(adjacentVertexId))
+                    pq.enqueue(vertexToId(adjacentVertex), vertexDistance(adjacentVertex))
                   }
 
                 case _ =>
@@ -73,7 +73,7 @@ case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(imp
 
   }
 
-  def getMstEdges: Set[WeightedEdge[V, W]] = edgeTo.toSet.diff(Set(null))
+  def getMstEdges: immutable.Set[WeightedEdge[V, W]] = edgeTo.values.toSet
 
   def totalWeight: W = mstWeight
 

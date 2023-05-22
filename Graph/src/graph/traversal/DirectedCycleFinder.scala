@@ -34,8 +34,8 @@ case class DirectedCycleFinder[V](graph: DirectedGraph[V]) {
     onStack += vertex
     notVisited -= vertex
     val incidentEdges = graph.incidentsFrom(vertex).iterator
-    while (incidentEdges.hasNext && !hasCycle) {
-      val edge = incidentEdges.next()
+    while (incidentEdges.nonEmpty && !hasCycle) {
+      val edge = incidentEdges.iterator.next()
       val successor = edge.destination
       if (notVisited.contains(successor)) {
         edgeTo(successor) = edge

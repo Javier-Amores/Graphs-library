@@ -70,7 +70,7 @@ class MatrixDirectedGraphInt(maxOrder: Int) extends DirectedUnweightedGraph[Int]
     if (source == destination) {
       throw GraphException("Self-loops are not allowed in simple graphs.")
     }
-    if (containsEdge(source, destination)) {
+    if (containsEdge(source, destination) || !containsVertex(source) || !containsVertex(destination)) {
       false
     } else {
       matrix(source)(destination) = true

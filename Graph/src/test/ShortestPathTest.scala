@@ -1,5 +1,5 @@
 import graph._
-import graph.shortestPath.{BellmanFordShortestPath, DirectedDijkstraShortestPath, UndirectedDijkstraShortestPath}
+import graph.shortestPath.{BellmanFordShortestPath, DijkstraShortestPath}
 
 object ShortestPathTest extends App {
   val dg = MapDirectedWeightedGraph[Int, Double]()
@@ -22,7 +22,7 @@ object ShortestPathTest extends App {
   dg.addEdge(6, 0, 0.58)
   dg.addEdge(6, 4, 0.93)
 
-  val sp = DirectedDijkstraShortestPath[Int, Double](dg, 0)
+  val sp = DijkstraShortestPath[Int, Double](dg, 0)
   for (i <- 0 to 7) {
     println(sp.distTo(i))
   }
@@ -82,8 +82,7 @@ object ShortestPathTest extends App {
   ug.addEdge(0, 4, 7)
   ug.addEdge(4, 3, 3)
 
-
-  val ud = UndirectedDijkstraShortestPath(ug, 0)
+  val ud = DijkstraShortestPath(ug, 0)
   println(ud.distTo(3))
   println(ud.pathTo(3))
 
