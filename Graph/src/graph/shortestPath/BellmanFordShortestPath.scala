@@ -1,7 +1,7 @@
 package graph.shortestPath
 
 import graph.traversal.{Cycle, DirectedCycleFinder}
-import graph.{DirectedEdge, DirectedWeightedEdge, DirectedWeightedGraph, GraphException, MapDirectedWeightedGraph}
+import graph.{DirectedEdge, DirectedWeightedEdge, DirectedWeightedGraph, GraphException, IsWeightedEdge, MapDirectedWeightedGraph, WeightedGraph}
 
 import scala.collection.mutable
 
@@ -14,11 +14,11 @@ import scala.collection.mutable
  * @tparam V The type of vertices in the graph
  * @tparam W The type of weights
  */
-case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V, W], source: V)(implicit ord: Ordering[W]) extends ShortestPath[V, W, ({type E[X] = DirectedWeightedEdge[X, W]})#E] {
+case class BellmanFordShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], source: V)(implicit ord: Ordering[W]) extends ShortestPath[V, W, ({type E[X] = IsWeightedEdge[X, W]})#E] {
 
   private val distTo = mutable.Map[V, W]()
-  private val edgeTo = mutable.Map[V, DirectedWeightedEdge[V, W]]()
-  private var cycle: Iterable[DirectedWeightedEdge[V, W]] = Iterable[DirectedWeightedEdge[V, W]]()
+  private val edgeTo = mutable.Map[V, IsWeightedEdge[V, W]]()
+  private var cycle: Iterable[IsWeightedEdge[V, W]] = Iterable[IsWeightedEdge[V, W]]()
 
   /**
    * Executes the Bellman-Ford shortest path algorithm.
@@ -32,7 +32,7 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
     while (queue.nonEmpty && !hasNegativeCycle) {
       val vertex: V = queue.dequeue()
       for (edge <- graph.incidentsFrom(vertex)) {
-        val destinationVertex = edge.destination
+        val destinationVertex = edge.vertex2
         distTo.get(destinationVertex) match {
           case None => distTo(destinationVertex) = Numeric[W].plus(distTo(vertex), edge.weight)
             edgeTo(destinationVertex) = edge
@@ -69,9 +69,9 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
     val spt = MapDirectedWeightedGraph[V, W]()
     for (vertex <- graph.vertices) {
       edgeTo.get(vertex) match {
-        case Some(edge) => spt.addVertex(edge.source)
-          spt.addVertex(edge.destination)
-          spt.addEdge(edge)
+        case Some(edge) => spt.addVertex(edge.vertex1)
+          spt.addVertex(edge.vertex2)
+          spt.addEdge(DirectedWeightedEdge(edge.vertex1,edge.vertex2,edge.weight))
         case None =>
       }
     }
@@ -92,31 +92,44 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: DirectedWeightedGraph[V
    *
    * @return An iterable of directed weighted edges representing the negative cycle
    */
-  def negativeCycle: Iterable[DirectedWeightedEdge[V, W]] = cycle
+  def negativeCycle: Iterable[IsWeightedEdge[V, W]] = cycle
 
 
-  def distTo(vertex: V): Option[W] = distTo.get(vertex) match {
-    case None => None
-    case Some(distance) => Some(distance)
+  def distTo(vertex: V): Option[W] = {
+    if (hasNegativeCycle) {throw GraphException(s"Input graph contains a negative cycle reachable from source node $source")}
+    else {
+      distTo.get(vertex) match {
+
+        case None => None
+        case Some(distance) => Some(distance)
+      }
+    }
   }
 
-  def hasPathTo(vertex: V): Boolean = distTo.get(vertex) match {
-    case None => false
-    case _ => true
-  }
-
-
-  def pathTo[Edge[X] >: DirectedWeightedEdge[X, W]](vertex: V): Iterable[Edge[V]] = {
-    if (!hasPathTo(vertex)) {
-      throw GraphException(s"Vertex $vertex is not reachable from $source")
+  def hasPathTo(vertex: V): Boolean = {
+    if (hasNegativeCycle) {
+      false
     }
     else {
-      val path = new mutable.Stack[DirectedWeightedEdge[V, W]]()
+      distTo.get(vertex) match {
+        case None => false
+        case _ => true
+      }
+    }
+  }
+
+
+  def pathTo[Edge[X] >: IsWeightedEdge[X, W]](vertex: V): Iterable[Edge[V]] = {
+    if (!hasPathTo(vertex)) {
+      throw GraphException(s"There is no minimum path from $source to $vertex")
+    }
+    else {
+      val path = new mutable.Stack[IsWeightedEdge[V, W]]()
       var edgeOption = edgeTo.get(vertex)
       while (edgeOption.isDefined) {
         val edge = edgeOption.get
         path.push(edge)
-        edgeOption = edgeTo.get(edge.source)
+        edgeOption = edgeTo.get(edge.vertex1)
       }
       path.asInstanceOf[Iterable[Edge[V]]]
     }

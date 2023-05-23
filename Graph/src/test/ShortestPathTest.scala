@@ -86,6 +86,19 @@ object ShortestPathTest extends App {
   println(ud.distTo(3))
   println(ud.pathTo(3))
 
+  var ubf = BellmanFordShortestPath(ug, 0)
+  println(ubf.distTo(3))
+  println(ubf.pathTo(3))
+
+  ug.addEdge(0,2,-1)
+
+  ubf = BellmanFordShortestPath(ug, 0)
+  println(ubf.hasNegativeCycle)
+  println(ubf.negativeCycle)
+  //println(ubf.distTo(3))
+  println(ubf.hasPathTo(3))
+  //println(ubf.pathTo(3))
+
 
   """
   val ord = Ordering[Double]
