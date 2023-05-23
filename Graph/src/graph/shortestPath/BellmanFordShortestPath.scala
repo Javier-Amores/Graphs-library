@@ -71,7 +71,7 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], so
       edgeTo.get(vertex) match {
         case Some(edge) => spt.addVertex(edge.vertex1)
           spt.addVertex(edge.vertex2)
-          spt.addEdge(DirectedWeightedEdge(edge.vertex1,edge.vertex2,edge.weight))
+          spt.addEdge(edge.vertex1, edge.vertex2, edge.weight)
         case None =>
       }
     }
@@ -96,7 +96,9 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], so
 
 
   def distTo(vertex: V): Option[W] = {
-    if (hasNegativeCycle) {throw GraphException(s"Input graph contains a negative cycle reachable from source node $source")}
+    if (hasNegativeCycle) {
+      throw GraphException(s"Input graph contains a negative cycle reachable from source node $source")
+    }
     else {
       distTo.get(vertex) match {
 

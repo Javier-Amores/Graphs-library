@@ -16,7 +16,7 @@ import scala.collection.mutable
  */
 case class DijkstraShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], source: V)(implicit ord: Ordering[W]) extends ShortestPath[V, W, ({type E[X] = IsWeightedEdge[X, W]})#E] {
 
-  private val edgeTo :mutable.Map[V,IsWeightedEdge[V, W]] = mutable.Map[V,IsWeightedEdge[V, W]]()
+  private val edgeTo: mutable.Map[V, IsWeightedEdge[V, W]] = mutable.Map[V, IsWeightedEdge[V, W]]()
   private val distTo = mutable.Map[V, W]()
   private val pq = IndexPriorityQueue[W](graph.order)(ord.reverse)
 

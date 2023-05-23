@@ -10,7 +10,7 @@ import scala.math.Numeric.Implicits._
 
 
 case class EagerPrimMST[V, W: Numeric](graph: UndirectedWeightedGraph[V, W])(implicit ord: Ordering[W]) extends PrimMST[V, W] {
-  private val edgeTo : mutable.Map[V,WeightedEdge[V, W]] = mutable.Map[V,WeightedEdge[V, W]]()
+  private val edgeTo: mutable.Map[V, WeightedEdge[V, W]] = mutable.Map[V, WeightedEdge[V, W]]()
   private val mstWeight: W = main()
 
   protected def main(): W = {

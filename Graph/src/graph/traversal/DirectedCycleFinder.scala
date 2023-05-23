@@ -19,8 +19,8 @@ case class DirectedCycleFinder[V](graph: DirectedGraph[V]) {
 
   private def main(): Unit = {
     val vertices = notVisited.iterator
-    while (vertices.hasNext && !hasCycle) {
-      val vertex = vertices.next()
+    while (vertices.nonEmpty && !hasCycle) {
+      val vertex = vertices.iterator.next()
       if (notVisited.contains(vertex)) {
         dfs(vertex)
       }
@@ -67,6 +67,5 @@ case class DirectedCycleFinder[V](graph: DirectedGraph[V]) {
    * @return An iterable of directed edges representing the cycle
    */
   def cycle(): Iterable[DirectedEdge[V]] = stackCycle
-
 
 }

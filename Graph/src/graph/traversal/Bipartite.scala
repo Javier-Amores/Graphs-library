@@ -17,8 +17,8 @@ case class Bipartite[V](graph: UndirectedGraph[V]) {
 
   private def main(): Unit = {
     val vertices = graph.vertices.iterator
-    while (vertices.hasNext && isTwoColorable) {
-      val vertex = vertices.next
+    while (vertices.nonEmpty && isTwoColorable) {
+      val vertex = vertices.iterator.next()
       color.get(vertex) match {
         case None => dfs(vertex)
         case _ =>
@@ -36,8 +36,8 @@ case class Bipartite[V](graph: UndirectedGraph[V]) {
   private def dfs(vertex: V): Unit = {
     val vertexColor = color.getOrElseUpdate(vertex, false)
     val adjacents = graph.adjacents(vertex).iterator
-    while (adjacents.hasNext && isTwoColorable) {
-      val successor = adjacents.next()
+    while (adjacents.nonEmpty && isTwoColorable) {
+      val successor = adjacents.iterator.next()
       color.get(successor) match {
         case None => color(successor) = !vertexColor
           dfs(successor)
