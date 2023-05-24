@@ -72,10 +72,7 @@ case class DijkstraShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], sourc
 
   main()
 
-  def distTo(vertex: V): Option[W] = distTo.get(vertex) match {
-    case None => None
-    case Some(distance) => Some(distance)
-  }
+  def distTo(vertex: V): Option[W] = distTo.get(vertex)
 
   def hasPathTo(vertex: V): Boolean = distTo.get(vertex) match {
     case None => false

@@ -100,11 +100,7 @@ case class BellmanFordShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], so
       throw GraphException(s"Input graph contains a negative cycle reachable from source node $source")
     }
     else {
-      distTo.get(vertex) match {
-
-        case None => None
-        case Some(distance) => Some(distance)
-      }
+      distTo.get(vertex)
     }
   }
 
