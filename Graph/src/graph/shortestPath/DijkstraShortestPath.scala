@@ -18,7 +18,6 @@ case class DijkstraShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], sourc
 
   private val edgeTo: mutable.Map[V, IsWeightedEdge[V, W]] = mutable.Map[V, IsWeightedEdge[V, W]]()
   private val distTo = mutable.Map[V, W]()
-  private val pq = IndexPriorityQueue[W](graph.order)(ord.reverse)
 
 
   /**
@@ -37,6 +36,7 @@ case class DijkstraShortestPath[V, W: Numeric](graph: WeightedGraph[V, W], sourc
     val idToVertex: mutable.Map[Int, V] = for ((v, i) <- vertexToId) yield (i, v)
 
     distTo(source) = Numeric[W].zero
+    val pq = IndexPriorityQueue[W](graph.order)(ord.reverse)
     pq.enqueue(vertexToId(source), Numeric[W].zero)
     while (pq.nonEmpty()) {
       val vertexId = pq.dequeue()
