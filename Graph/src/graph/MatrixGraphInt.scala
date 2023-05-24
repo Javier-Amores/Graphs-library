@@ -1,6 +1,6 @@
 package graph
 
-import scala.collection.{immutable, mutable}
+import scala.collection.immutable
 
 object MatrixGraphInt {
   def apply(maxOrder: Int): MatrixGraphInt = new MatrixGraphInt(maxOrder)

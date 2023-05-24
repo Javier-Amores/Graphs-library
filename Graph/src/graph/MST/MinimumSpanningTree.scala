@@ -2,7 +2,7 @@ package graph.MST
 
 import graph.WeightedEdge
 
-import scala.collection.{immutable, mutable}
+import scala.collection.immutable
 
 /**
  * A trait representing a minimum spanning tree algorithm for a graph.

@@ -1,6 +1,6 @@
 package graph.traversal
 
-import graph._
+import graph.UndirectedGraph
 
 import scala.collection.{immutable, mutable}
 

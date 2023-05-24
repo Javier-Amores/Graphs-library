@@ -1,6 +1,6 @@
 package graph.traversal
 
-import graph._
+import graph.{Graph, IsEdge}
 
 import scala.annotation.tailrec
 import scala.collection.mutable

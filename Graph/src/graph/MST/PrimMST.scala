@@ -1,8 +1,5 @@
 package graph.MST
 
-import graph.WeightedEdge
-
-import scala.collection.mutable
 
 
 trait PrimMST[V, W] extends MinimumSpanningTree[V, W] {

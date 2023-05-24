@@ -1,6 +1,6 @@
 package graph.traversal
 
-import graph.{DirectedEdge, DirectedGraph, DirectedWeightedEdge, IsDirectedEdge}
+import graph.{DirectedEdge, DirectedGraph}
 
 import scala.collection.mutable
 

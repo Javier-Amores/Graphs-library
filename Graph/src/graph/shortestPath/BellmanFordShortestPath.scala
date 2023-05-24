@@ -1,7 +1,7 @@
 package graph.shortestPath
 
-import graph.traversal.{Cycle, DirectedCycleFinder}
-import graph.{DirectedEdge, DirectedWeightedEdge, DirectedWeightedGraph, GraphException, IsWeightedEdge, MapDirectedWeightedGraph, WeightedGraph}
+import graph.traversal.DirectedCycleFinder
+import graph.{DirectedWeightedEdge, GraphException, IsWeightedEdge, MapDirectedWeightedGraph, WeightedGraph}
 
 import scala.collection.mutable
 

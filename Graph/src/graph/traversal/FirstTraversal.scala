@@ -1,7 +1,7 @@
 package graph.traversal
 
 
-import graph._
+import graph.{Edge, Graph, GraphException, IsEdge}
 
 import scala.collection.mutable
 

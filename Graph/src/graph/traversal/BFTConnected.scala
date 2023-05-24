@@ -1,6 +1,6 @@
 package graph.traversal
 
-import graph._
+import graph.{GraphException, UndirectedGraph}
 
 
 /**

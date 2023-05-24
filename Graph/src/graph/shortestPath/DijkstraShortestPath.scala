@@ -1,7 +1,7 @@
 package graph.shortestPath
 
 import graph.priorityQueue.IndexPriorityQueue
-import graph.{GraphException, IsWeightedEdge, WeightedEdge, WeightedGraph}
+import graph.{GraphException, IsWeightedEdge, WeightedGraph}
 
 import scala.collection.mutable
 

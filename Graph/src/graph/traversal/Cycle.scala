@@ -1,8 +1,7 @@
 package graph.traversal
 
-import graph._
+import graph.{Graph, IsEdge}
 
-import scala.collection.mutable
 
 /**
  * Class for checking if a graph is acyclic
